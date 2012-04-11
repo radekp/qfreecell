@@ -177,7 +177,9 @@ Freecell::Freecell(char *dir)
   initStatusBar();
 
   initDoc();
-  initView();  
+  initView();
+
+  slotFileNew();
 }
 
 Freecell::~Freecell()
