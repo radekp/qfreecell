@@ -182,6 +182,11 @@ Freecell::Freecell(char *dir)
 
 Freecell::~Freecell()
 {
+#ifdef QTOPIA
+    QtopiaServiceRequest svreq("RotationManager", "setCurrentRotation(int)");
+    svreq << 0;
+    svreq.send();
+#endif
 }
 
 void Freecell::initMenuBar()
