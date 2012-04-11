@@ -1,0 +1,7 @@
+[Desktop Entry]
+Comment[]=Freecell
+Exec=qtmoko-freecell
+Icon=qtmoko-freecell/qtmoko-freecell
+Type=Application
+Name[]=Freecell
+

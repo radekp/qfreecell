@@ -1,8 +1,17 @@
-# -------------------------------------------------
-# Project created by QtCreator 2012-04-11T15:38:11
-# -------------------------------------------------
-TARGET = qfreecell
-TEMPLATE = app
+# Copyright (c) 2012 Radek Polak
+
+TEMPLATE=app
+
+# The binary name
+TARGET=qtmoko-freecell
+
+# This app uses Qtopia
+CONFIG+=qtopia
+
+DEFINES+=QTOPIA
+
+QT += svg
+
 SOURCES += main.cpp \
     ccongratulationdata.cpp \
     closewarningdata.cpp \
@@ -20,6 +29,7 @@ SOURCES += main.cpp \
     cards.cpp \
     freecelldoc.cpp \
     coptionsdata.cpp
+
 HEADERS += resource.h \
     main.h \
     lostdlg.h \
@@ -32,5 +42,30 @@ HEADERS += resource.h \
     closewarning.h \
     ccongratulation.h \
     cards.h
-FORMS += 
-RESOURCES += qresources.qrc
+    
+RESOURCES = qresources.qrc
+
+pkg [
+    name=qtmoko-freecell
+    desc="freecell"
+    version=$$QTOPIA_VERSION
+    license=$$QTOPIA_LICENSE
+    maintainer=$$QTOPIA_MAINTAINER
+]
+
+target [
+    hint=sxe
+    domain=trusted
+]
+
+desktop [
+    hint=desktop
+    files=qtmoko-freecell.desktop
+    path=/apps/Games
+]
+
+pics [
+    hint=pics
+    files=qtmoko-freecell.svg
+    path=/pics/qtmoko-freecell
+]

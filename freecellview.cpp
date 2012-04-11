@@ -59,8 +59,7 @@ FreecellView::FreecellView(QWidget * parent, FreecellDoc * doc):QWidget(parent)
     // load cards
 
     for (i = 1; i <= 52; i++) {
-        sprintf(buffer, "%s/cards/%i.bmp", parent_class->directory, i);
-        cardpics[i - 1].load(buffer);
+        cardpics[i-1] = QPixmap(QString(":pictures/cards/%1.bmp").arg(i));
     }
 
     cards.clear();
