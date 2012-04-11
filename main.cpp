@@ -22,17 +22,8 @@
 
 int main(int argc, char *argv[])
 {
-  QApplication a(argc, argv);
-  a.setFont(QFont("helvetica", 12));
-  /* uncomment the following line, if you want a Windows 95 look*/
-  // a.setStyle(WindowsStyle);
-    
-  Freecell *freecell=new Freecell(argv[0]);
-
-  a.setMainWidget(freecell);
-
-  freecell->setCaption("QFreeCell  " VERSION);
-  freecell->show();
-
+  QApplication a(argc, argv);    
+  Freecell w(argv[0]);
+  w.show();
   return a.exec();
 }

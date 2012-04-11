@@ -16,9 +16,8 @@
  ***************************************************************************/
 #include "closewarning.h"
 
-CLoseWarning::CLoseWarning(QWidget *parent, const char *name) : QDialog(parent,name,true){
+CLoseWarning::CLoseWarning(QWidget *parent, const char *name) : QDialog(parent){
 	move(POS_X, POS_Y);
-	setCaption("Warning");
 	initDialog();
 	connect(QPushButton_YES, SIGNAL(clicked()), this, SLOT(accept()));
 	connect(QPushButton_UPS, SIGNAL(clicked()), this, SLOT(reject()));

@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "qpainter.h"
+#include <QMouseEvent>
 
 
 FreecellView::FreecellView(QWidget *parent, FreecellDoc *doc) : QWidget(parent)
@@ -41,7 +42,7 @@ FreecellView::FreecellView(QWidget *parent, FreecellDoc *doc) : QWidget(parent)
 
 	// load background
 
-  setBackgroundColor(QColor(0,0,0));
+  //setBackgroundColor(QColor(0,0,0));
 	
 	if( *(parent_class->opt.background_enabled) )
 		if(background_picture.load(parent_class->opt.background_file))
@@ -49,7 +50,7 @@ FreecellView::FreecellView(QWidget *parent, FreecellDoc *doc) : QWidget(parent)
 		else *(parent_class->opt.background_enabled) = false;
 	
 	if(! *(parent_class->opt.background_enabled) )
-	  setBackgroundColor(*(parent_class->opt.background_color));
+//	  setBackgroundColor(*(parent_class->opt.background_color));
 		
   // load cells
 
@@ -112,10 +113,7 @@ void FreecellView::mousePressEvent(QMouseEvent *e)
 	
 	else
 	if(game_active)	
-  	switch (e->button())
   	{
-  		case LeftButton:
-  		
           	if(y>-1 && x>-1)
           	{
             	if(!card_selected)
@@ -205,56 +203,7 @@ void FreecellView::mousePressEvent(QMouseEvent *e)
           				}
           		}
 
-          		break;
-  		
-  		case RightButton:
-  		
-        			// column ?
-        			
-        			if(y>-1 && x>-1)
-        			{
- 	      				// check cells on the left
- 	      				for(i=0;i<*(parent_class->opt.num_freecells);i++)
-   	    					if(cards.moveCard(x, y, i)==0)
-     	  					{
-       							drawMovingCard(x, y, i, -1, &p);
-       							break;
-       						}
-       					
-       					// if no cells are free on the left sife check right cells
-       					int freecells = 0;
-       					for(i=0;i<*(parent_class->opt.num_freecells);i++) if(cards.getBoxCard(i)==NO_CARD) freecells++;
-       					
-       					bool putit = false;
-       					
-       					if(freecells==0)
-	        				for(i=4;i<=7;i++)
-  	      				{
-    	    					if(cards.moveCard(x, y, i)==0 && !putit)
-      	  					{
-        							rest--;
-        							putit = true;
-        							drawMovingCard(x, y, i, -1, &p);
-        						}
-        					}
-        				
-        				
-        			}
-        			else
-        			//clicked on a card in a cell
-      	
-        			if(y==-1 && x<*(parent_class->opt.num_freecells) && x>=0)
-        				for(i=4;i<=7;i++)
-        					//draw cards
-        					if(cards.moveCard(x, i)==0)
-        					{
-        						rest--;
-        						drawMovingCard(x, -1, i, -1, &p);
-        						break;
-        					}
-  						
-        			break;
-  			
+
   	}
 		
 		if(card_selected)
@@ -530,7 +479,7 @@ void FreecellView::moveCard(int x1, int y1, int x2, int y2, QPixmap card){
 	int i;
 								
 	// save background
-	bitBlt((QPaintDevice*)&screen, 0, 0, this, ox, oy, CARD_WIDTH, CARD_HEIGHT);
+//	bitBlt((QPaintDevice*)&screen, 0, 0, this, ox, oy, CARD_WIDTH, CARD_HEIGHT);
 						
 	for(i=1;i<=c;i++)
 	{
@@ -538,13 +487,13 @@ void FreecellView::moveCard(int x1, int y1, int x2, int y2, QPixmap card){
 		py = y1+i*(y2-y1)/c;
 							
 		// restore background
-		bitBlt(this, ox, oy, (QPaintDevice*)&screen, 0, 0, CARD_WIDTH, CARD_HEIGHT);
+//		bitBlt(this, ox, oy, (QPaintDevice*)&screen, 0, 0, CARD_WIDTH, CARD_HEIGHT);
 							
 		// save background
-		bitBlt((QPaintDevice*)&screen, 0, 0, this, px, py, CARD_WIDTH, CARD_HEIGHT);
+//		bitBlt((QPaintDevice*)&screen, 0, 0, this, px, py, CARD_WIDTH, CARD_HEIGHT);
 
  		// draw card on screen
-		bitBlt(this, px, py, (QPaintDevice*)&card, 0, 0, CARD_WIDTH-1, CARD_HEIGHT);
+//		bitBlt(this, px, py, (QPaintDevice*)&card, 0, 0, CARD_WIDTH-1, CARD_HEIGHT);
 														
 		ox = x1+i*(x2-x1)/c;
 		oy = y1+i*(y2-y1)/c;

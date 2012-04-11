@@ -16,9 +16,8 @@
  ***************************************************************************/
 #include "ccongratulation.h"
 
-CCongratulation::CCongratulation(QWidget *parent, const char *name) : QDialog(parent,name,true){
+CCongratulation::CCongratulation(QWidget *parent, const char *name) : QDialog(parent){
 	move(POS_X, POS_Y);
-	setCaption("Winner");
 	initDialog();
 	connect(QPushButton_OK, SIGNAL(clicked()), this, SLOT(accept()));
 }

@@ -20,20 +20,17 @@
 
 // include files for QT
 #include <qstring.h>
-#include <qpopupmenu.h>
 #include <qmainwindow.h>
-#include <qaccel.h>
 #include <qmenubar.h>
 #include <qtoolbar.h>
 #include <qpixmap.h>
 #include <qtoolbutton.h>
-#include <qapp.h>
 #include <qstatusbar.h>
 #include <qwhatsthis.h>
-#include <qmsgbox.h>
 #include <qfiledialog.h>
 #include <qprinter.h>
 #include <qpainter.h>
+#include <QMenu>
 
 // application specific includes
 #include "freecellview.h"
@@ -132,13 +129,13 @@ class Freecell : public QMainWindow
     FreecellDoc *doc;
   
     /** file_menu contains all items of the menubar entry "File" */
-    QPopupMenu *fileMenu;
+    QMenu *fileMenu;
     /** edit_menu contains all items of the menubar entry "Edit" */
-    QPopupMenu *protocolMenu;
+    QMenu *protocolMenu;
     /** view_menu contains all items of the menubar entry "View" */
-    QPopupMenu *viewMenu;
+    QMenu *viewMenu;
     /** view_menu contains all items of the menubar entry "Help" */
-    QPopupMenu *helpMenu;
+    QMenu *helpMenu;
   
     QToolBar *fileToolbar;
 

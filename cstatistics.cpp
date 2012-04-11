@@ -21,8 +21,7 @@
 #include <stdlib.h>
 
 CStatistics::CStatistics(QWidget *parent, const char *name, bool modal)
-: QDialog(0, name, modal){
-	setCaption("Statistics");
+: QDialog(0){
 	initDialog();
 	move(POS_X, POS_Y);
 	connect(QPushButton_OK, SIGNAL(clicked()), this, SLOT(accept()));

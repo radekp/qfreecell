@@ -16,9 +16,9 @@
  ***************************************************************************/
 #include "lostdlg.h"
 
-LostDlg::LostDlg(QWidget *parent, const char *name, bool modal) : QDialog(parent,name,modal){
+LostDlg::LostDlg(QWidget *parent, const char *name, bool modal) : QDialog(parent){
 	move(POS_X, POS_Y);
-	setCaption("Loser");
+        //setCaption("Loser");
 	initDialog();
 	connect(QPushButton_1, SIGNAL(clicked()), this, SLOT(accept()));
 }

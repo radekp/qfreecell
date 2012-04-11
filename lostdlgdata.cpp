@@ -12,22 +12,22 @@
 void  LostDlg::initDialog(){
   this->resize(210,130);
   this->setMinimumSize(0,0);
-  QGroupBox_1= new QGroupBox(this,"NoName");
+  QGroupBox_1= new QGroupBox(this);
   QGroupBox_1->setGeometry(10,10,190,110);
   QGroupBox_1->setMinimumSize(0,0);
   QGroupBox_1->setTitle("");
 
-  QLabel_1= new QLabel(this,"NoName");
+  QLabel_1= new QLabel(this);
   QLabel_1->setGeometry(30,20,40,23);
   QLabel_1->setMinimumSize(0,0);
   QLabel_1->setText("Ups...");
 
-  QLabel_2= new QLabel(this,"NoName");
+  QLabel_2= new QLabel(this);
   QLabel_2->setGeometry(30,40,160,23);
   QLabel_2->setMinimumSize(0,0);
   QLabel_2->setText("You have lost this game.");
 
-  QPushButton_1= new QPushButton(this,"NoName");
+  QPushButton_1= new QPushButton(this);
   QPushButton_1->setGeometry(30,80,50,23);
   QPushButton_1->setMinimumSize(0,0);
   QPushButton_1->setText("OK");

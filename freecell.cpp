@@ -33,6 +33,9 @@
 #include <stdio.h>
 #include <qdialog.h>
 #include <qfile.h>
+#include <QMessageBox>
+#include <QApplication>
+#include <QCloseEvent>
 
 #include <math.h>
 
@@ -40,7 +43,6 @@ Freecell::Freecell(char *dir)
 {
 	FILE *f;
 
-  setCaption("QFreeCell " VERSION);
 
 	// create ~/.qfreecell	
 	QDir d(dir);
@@ -48,9 +50,10 @@ Freecell::Freecell(char *dir)
 	
 	// save location of binary
 	d.cdUp();
-	strcpy(game_directory, (d.absPath()).data());
+        strcpy(game_directory, (d.path()).toLatin1().data());
 	
-	strcpy(directory, (d.homeDirPath()).data());	strcat(directory, "/.qfreecell");
+        strcpy(directory, QDir::homePath().toLatin1().data());
+        strcat(directory, "/.qfreecell");
 	
 	d.setPath(directory);
 	if(!d.exists()) // create directories if not exists
@@ -75,31 +78,31 @@ Freecell::Freecell(char *dir)
 		unsigned int i;
 		
 		d.cd("backgrounds");
-		d.setNameFilter("*.bmp");
+                d.setNameFilters(QStringList() << "*.bmp");
 		for(i=0;i<d.count();i++)
 		{
 			sprintf(dst, "%s/backgrounds/%s", directory, d[i]);
-			sprintf(src, "%s/%s", d.absPath().data(), d[i]);
+                        sprintf(src, "%s/%s", d.path().toLatin1().data(), d[i]);
 			myCopy(src, dst);
 		}
 			
 		d.cdUp();
 		d.cd("freecells");
-		d.setNameFilter("*.bmp");
+                d.setNameFilters(QStringList() << "*.bmp");
 		for(i=0;i<d.count();i++)
 		{
 			sprintf(dst, "%s/freecells/%s", directory, d[i]);
-			sprintf(src, "%s/%s", d.absPath().data(), d[i]);
+                        sprintf(src, "%s/%s", d.path().toLatin1().data(), d[i]);
 			myCopy(src, dst);
 		}
 				
 		d.cdUp();
 		d.cd("cards");
-		d.setNameFilter("*.bmp");
+                d.setNameFilters(QStringList() << "*.bmp");
 		for(i=0;i<d.count();i++)
 		{
 			sprintf(dst, "%s/cards/%s", directory, d[i]);
-			sprintf(src, "%s/%s", d.absPath().data(), d[i]);
+                        sprintf(src, "%s/%s", d.path().toLatin1().data(), d[i]);
 			myCopy(src, dst);
 		}
 	}
@@ -179,27 +182,25 @@ void Freecell::initMenuBar()
   ///////////////////////////////////////////////////////////////////
   // menuBar entry fileMenu
 
-  fileMenu=new QPopupMenu();
-  fileMenu->insertItem("&New Game", this, SLOT(slotFileNew()), CTRL+Key_N, ID_FILE_NEW);
-  fileMenu->insertItem("Select &Game", this, SLOT(slotFileSelect()), CTRL+Key_G, ID_FILE_SELECT);
-  fileMenu->insertSeparator();
-  fileMenu->insertItem("&Statistic", this, SLOT(slotFileStatistic()), CTRL+Key_S, ID_FILE_SAVE);
-	fileMenu->insertItem("&Options", this, SLOT(slotFileOptions()), CTRL+Key_O, ID_FILE_OPTIONS);
-  //fileMenu->insertItem("Save &as...", this, SLOT(slotFileSaveAs()), 0, ID_FILE_SAVE_AS);
-  //fileMenu->insertItem("&Close", this, SLOT(slotFileClose()), CTRL+Key_W, ID_FILE_CLOSE);
-  fileMenu->insertSeparator();
-  fileMenu->insertItem("E&xit", this, SLOT(slotFileQuit()), CTRL+Key_Q, ID_FILE_QUIT);
+#ifdef QTOPIA
+    fileMenu = QSoftMenuBar::menuFor(this);
+    fileMenu->addAction("");
+#else
+    fileMenu = menuBar()->addMenu("&File");
+#endif
+
+  fileMenu->addAction("New Game", this, SLOT(slotFileNew()));
+  fileMenu->addAction("Select Game", this, SLOT(slotFileSelect()));
+  fileMenu->addAction("Statistic", this, SLOT(slotFileStatistic()));
+  fileMenu->addAction("Options", this, SLOT(slotFileOptions()));
+  fileMenu->addAction("Exit", this, SLOT(slotFileQuit()));
 
   ///////////////////////////////////////////////////////////////////
   // menuBar entry protocolMenu
-  protocolMenu=new QPopupMenu();
-  protocolMenu->insertItem("Start &Protocol", this, SLOT(slotProtocolStart()), CTRL+Key_P, ID_PROTOCOL_START);
-  protocolMenu->insertItem("Stop P&rotocol", this, SLOT(slotProtocolStop()), CTRL+Key_R, ID_PROTOCOL_STOP);
+  protocolMenu=new QMenu();
+  protocolMenu->addAction("Start Protocol", this, SLOT(slotProtocolStart()));
+  protocolMenu->addAction("Stop Protocol", this, SLOT(slotProtocolStop()));
 	
-	protocolMenu->setItemEnabled(ID_PROTOCOL_START, false);
-	protocolMenu->setItemEnabled(ID_PROTOCOL_STOP, false);
-	
-
   ///////////////////////////////////////////////////////////////////
   // menuBar entry viewMenu
   //viewMenu=new QPopupMenu();
@@ -215,19 +216,19 @@ void Freecell::initMenuBar()
   
   ///////////////////////////////////////////////////////////////////
   // menuBar entry helpMenu
-  helpMenu=new QPopupMenu();
-  helpMenu->insertItem("About...", this, SLOT(slotHelpAbout()), 0, ID_HELP_ABOUT);
+  helpMenu=new QMenu();
+  helpMenu->addAction("About...", this, SLOT(slotHelpAbout()));
 
 
   ///////////////////////////////////////////////////////////////////
   // MENUBAR CONFIGURATION
   // set menuBar() the current menuBar 
 
-  menuBar()->insertItem("&File", fileMenu);
-  menuBar()->insertItem("&Protocol", protocolMenu);
-
-  menuBar()->insertSeparator();
-  menuBar()->insertItem("&Help", helpMenu);
+//  menuBar()->insertItem("&File", fileMenu);
+//  menuBar()->insertItem("&Protocol", protocolMenu);
+//
+//  menuBar()->insertSeparator();
+//  menuBar()->insertItem("&Help", helpMenu);
   
   ///////////////////////////////////////////////////////////////////
   // CONNECT THE SUBMENU SLOTS WITH SIGNALS
@@ -240,28 +241,10 @@ void Freecell::initMenuBar()
 
 void Freecell::initToolBar()
 {
-  ///////////////////////////////////////////////////////////////////
-  // TOOLBAR
-  QPixmap newIcon;
-
-  fileToolbar = new QToolBar(this, "file operations");
- 
-  newIcon = QPixmap(filenew);
-  //QToolButton *fileNew =
-  new QToolButton(newIcon, "New Game", 0, this,
-                                         SLOT(slotFileNew()), fileToolbar);
-
-  
-  fileToolbar->addSeparator();
-  //QWhatsThis::add(fileNew,"Click this button to create a new file.\n\n"
-  //                "You can also select the New command from the File menu.");
 }
 
 void Freecell::initStatusBar()
 {
-  ///////////////////////////////////////////////////////////////////
-  //STATUSBAR
-  statusBar()->message(IDS_STATUS_DEFAULT, 2000);
 }
 
 void Freecell::initDoc()
@@ -305,9 +288,7 @@ void Freecell::slotFileNew()
 	int  i;
 	char buffer[100];
 	
-  statusBar()->message("New Game");
   doc->newDoc();
-  statusBar()->message(IDS_STATUS_DEFAULT);
 
   i = 1;
 	if(view->game_active)
@@ -323,9 +304,6 @@ void Freecell::slotFileNew()
 
    	current_game = rand()%MAX_GAMES;
     	
-   	sprintf(buffer, "QFreeCell  %s / #%i", VERSION, current_game);
-   	setCaption(buffer);
-
    	view->cards.clear();
    	view->cards.init(current_game);
    	view->card_selected = false;
@@ -334,7 +312,7 @@ void Freecell::slotFileNew()
 	 	view->moves = 0;
 	 	
 	 	slotProtocolStop();
-	 	view->repaint(true);
+                view->repaint();
    }
     	
 }
@@ -346,9 +324,6 @@ void Freecell::slotFileSelect()
 	char buffer[100];
 	int i;
 		
-  statusBar()->message("Select Game");
-  statusBar()->message(IDS_STATUS_DEFAULT);
-
 	CSelectGameDlg dlg(this);
 
  	if(dlg.exec()==QDialog::Accepted)
@@ -371,11 +346,9 @@ void Freecell::slotFileSelect()
 			view->moves = 0;
 			        	
  	   	current_game = dlg.getGamenumber();
- 	   	sprintf(buffer, "QFreeCell  %s / #%i", VERSION, current_game);
-   		setCaption(buffer);
 		 	
 		 	slotProtocolStop();
-		 	view->repaint(true);
+                        view->repaint();
    	}
   }
  	
@@ -384,9 +357,6 @@ void Freecell::slotFileSelect()
 
 void Freecell::slotFileStatistic()
 {
-  statusBar()->message("Statistics");
-  statusBar()->message(IDS_STATUS_DEFAULT);
-
 	if(pstatistics==NULL) pstatistics = new CStatistics(this, "", false);
 	pstatistics->show();
 }
@@ -394,73 +364,66 @@ void Freecell::slotFileStatistic()
 
 void Freecell::slotFileQuit()
 { 
-  statusBar()->message("Exiting application...");
-	
 	if(view->game_active)
 	{	
 		if(newGameWarning()==QDialog::Accepted)	
 		{
 			pstatistics->addLost();
-			qApp->quit();
+                        qApp->quit();
 		}
 	}
 	else qApp->quit();
-		
-  statusBar()->message(IDS_STATUS_DEFAULT);
 }
 
 
 void Freecell::slotViewToolBar()
 {
-  statusBar()->message("Toggle toolbar...");
   ///////////////////////////////////////////////////////////////////
   // turn Toolbar on or off
   
   if (fileToolbar->isVisible())
   {
     fileToolbar->hide();
-    viewMenu->setItemChecked(ID_VIEW_TOOLBAR, false);
+    //viewMenu->setItemChecked(ID_VIEW_TOOLBAR, false);
   } 
   else
   {
     fileToolbar->show();
-    viewMenu->setItemChecked(ID_VIEW_TOOLBAR, true);
+    //viewMenu->setItemChecked(ID_VIEW_TOOLBAR, true);
   };
 
-  statusBar()->message(IDS_STATUS_DEFAULT);
 }
 
 void Freecell::slotViewStatusBar()
 {
-  statusBar()->message("Toggle statusbar...");
   ///////////////////////////////////////////////////////////////////
   //turn Statusbar on or off
   
   if (statusBar()->isVisible())
   {
     statusBar()->hide();
-    viewMenu->setItemChecked(ID_VIEW_STATUSBAR, false);
+    //viewMenu->setItemChecked(ID_VIEW_STATUSBAR, false);
   }
   else
   {
     statusBar()->show();
-    viewMenu->setItemChecked(ID_VIEW_STATUSBAR, true);
+    //viewMenu->setItemChecked(ID_VIEW_STATUSBAR, true);
   }
   
-  statusBar()->message(IDS_STATUS_DEFAULT);
+  //statusBar()->message(IDS_STATUS_DEFAULT);
 }
 
 void Freecell::slotHelpAbout()
 {
-  QMessageBox::about(this,"About...",
-                     IDS_APP_ABOUT );
+//  QMessageBox::about(this,"About...",
+//                     IDS_APP_ABOUT );
 }
 
 void Freecell::slotStatusHelpMsg(const QString &text)
 {
   ///////////////////////////////////////////////////////////////////
   // change status message of whole statusbar temporary (text, msec)
-  statusBar()->message(text, 2000);
+  //statusBar()->message(text, 2000);
 }
 
 void Freecell::statusCallback(int id_)
@@ -543,38 +506,38 @@ void Freecell::slotFileOptions(){
 		view->empty.load(opt.empty_file);
 		view->background_picture.load(opt.background_file);
 		
-		view->repaint(false);
+                view->repaint();
 	}
 }
 
 /**  */
 void Freecell::slotProtocolStart(){
-	char buffer[200];
-	
-	sprintf(buffer, "%s/protocols", directory);
-	QFileDialog d(buffer, "*.qfc", this, 0, true);
-	
-	d.setMode(QFileDialog::AnyFile);
-	
-	if(d.exec()==QDialog::Accepted)
-	{
-		protocol_file = new QString(d.selectedFile());
-		
-		if(protocol_fd!=NULL) fclose(protocol_fd);
-		
-		protocol_fd = fopen((char*)protocol_file->data(), "a");
-		
-		if(protocol_fd==NULL) protocol_file = new QString();
-		else
-		{
-   		time_t t = time(NULL);
-   		fprintf(protocol_fd, "Start: %sGame: %i\n", ctime(&t), current_game);
-			protocolMenu->setItemEnabled(ID_PROTOCOL_START, false);
-			protocolMenu->setItemEnabled(ID_PROTOCOL_STOP, true);
-   	}
-		
-		view->repaint(5, 580, 150, 20, false);
-	}
+//	char buffer[200];
+//
+//	sprintf(buffer, "%s/protocols", directory);
+//	QFileDialog d(buffer, "*.qfc", this, 0, true);
+//
+//	d.setMode(QFileDialog::AnyFile);
+//
+//	if(d.exec()==QDialog::Accepted)
+//	{
+//		protocol_file = new QString(d.selectedFile());
+//
+//		if(protocol_fd!=NULL) fclose(protocol_fd);
+//
+//		protocol_fd = fopen((char*)protocol_file->data(), "a");
+//
+//		if(protocol_fd==NULL) protocol_file = new QString();
+//		else
+//		{
+//   		time_t t = time(NULL);
+//   		fprintf(protocol_fd, "Start: %sGame: %i\n", ctime(&t), current_game);
+//			protocolMenu->setItemEnabled(ID_PROTOCOL_START, false);
+//			protocolMenu->setItemEnabled(ID_PROTOCOL_STOP, true);
+//   	}
+//
+//		view->repaint(5, 580, 150, 20, false);
+//	}
 }
 
 /**  */
@@ -588,36 +551,17 @@ void Freecell::slotProtocolStop(){
 		protocol_fd = NULL;
 	}
 	
-	if(view->game_active)
-		protocolMenu->setItemEnabled(ID_PROTOCOL_START, true);
-	else
-		protocolMenu->setItemEnabled(ID_PROTOCOL_START, false);
+//	if(view->game_active)
+//		protocolMenu->setItemEnabled(ID_PROTOCOL_START, true);
+//	else
+//		protocolMenu->setItemEnabled(ID_PROTOCOL_START, false);
 	
-	protocolMenu->setItemEnabled(ID_PROTOCOL_STOP, false);
+//	protocolMenu->setItemEnabled(ID_PROTOCOL_STOP, false);
 
-	view->repaint(5, 580, 150, 20, false);	
+        view->repaint();
 }
 
 /**  */
 void Freecell::myCopy(char *src, char *dst){
-	QFile s(src);
-	QFile d(dst);
-	
-	char *block = new char[4096*4];
-	int  i = 0;
-	
-	s.open(IO_ReadWrite);
-	d.open(IO_ReadWrite);
-	
-	do
-	{
-		i = s.readBlock(block, 4096*4);
-		d.writeBlock(block, i);
-	}while(i==4096*4);
-	
-	delete block;
-	
-	d.flush();
-	s.close();
-	d.close();
+    QFile::copy(src, dst);
 }

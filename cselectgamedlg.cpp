@@ -17,9 +17,8 @@
 #include "cselectgamedlg.h"
 #include <stdlib.h>
 
-CSelectGameDlg::CSelectGameDlg(QWidget *parent, const char *name) : QDialog(parent,name,true){
+CSelectGameDlg::CSelectGameDlg(QWidget *parent, const char *name) : QDialog(parent){
 	move(POS_X, POS_Y);
-	setCaption("Select Game");
 	initDialog();
 	connect(QPushButton_1, SIGNAL(clicked()), this, SLOT(buttonPressed()));
 	connect(QPushButton_ABORT, SIGNAL(clicked()), this, SLOT(abort()));
@@ -37,7 +36,7 @@ return gamenumber;
 /**  */
 void CSelectGameDlg::buttonPressed()
 {
-	gamenumber = atoi(QSpinBox_1->text());
+        gamenumber = QSpinBox_1->value();
 	accept();
 }
 
