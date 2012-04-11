@@ -31,6 +31,11 @@
 #include <qprinter.h>
 #include <qpainter.h>
 #include <QMenu>
+#ifdef QTOPIA
+#include <QSoftMenuBar>
+#else
+#include <QMenuBar>
+#endif
 
 // application specific includes
 #include "freecellview.h"

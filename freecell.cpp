@@ -39,10 +39,20 @@
 
 #include <math.h>
 
+#ifdef QTOPIA
+#include <QtopiaServiceRequest>
+#endif
+
 Freecell::Freecell(char *dir)
 {
-	FILE *f;
+#ifdef QTOPIA
+    QtopiaServiceRequest svreq("RotationManager", "setCurrentRotation(int)");
+    svreq << 90;
+    svreq.send();
+    showFullScreen();
+#endif
 
+	FILE *f;
 
 	// create ~/.qfreecell	
 	QDir d(dir);
@@ -399,16 +409,16 @@ void Freecell::slotViewStatusBar()
   ///////////////////////////////////////////////////////////////////
   //turn Statusbar on or off
   
-  if (statusBar()->isVisible())
-  {
-    statusBar()->hide();
-    //viewMenu->setItemChecked(ID_VIEW_STATUSBAR, false);
-  }
-  else
-  {
-    statusBar()->show();
-    //viewMenu->setItemChecked(ID_VIEW_STATUSBAR, true);
-  }
+//  if (statusBar()->isVisible())
+//  {
+//    statusBar()->hide();
+//    //viewMenu->setItemChecked(ID_VIEW_STATUSBAR, false);
+//  }
+//  else
+//  {
+//    statusBar()->show();
+//    //viewMenu->setItemChecked(ID_VIEW_STATUSBAR, true);
+//  }
   
   //statusBar()->message(IDS_STATUS_DEFAULT);
 }
