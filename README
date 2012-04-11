@@ -1,0 +1,17 @@
+
+Mouse
+=====
+
+Left button : select card, move selected card
+Right button: move card to free cell on the left side
+							if impossible => try to move card to free cell on right side
+
+
+Pictures
+========
+
+At the moment all pictures has to be in BMP format.
+
+Background pictures	: 800x600 in ~/.qfreecell/backgrounds
+Free cells         	:	73x98   in ~/.qfreecell/freecells
+Cards								:	71x96   in ~/.qfreecell/cards
