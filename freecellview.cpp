@@ -25,6 +25,7 @@
 #include <unistd.h>
 #include "qpainter.h"
 #include <QMouseEvent>
+#include <QDebug>
 
 #ifdef QTOPIA
 
@@ -40,7 +41,10 @@
 
 #endif
 
-FreecellView::FreecellView(QWidget * parent, FreecellDoc * doc):QWidget(parent)
+FreecellView::FreecellView(QWidget * parent, FreecellDoc * doc)
+:  QWidget(parent)
+    , mouseX(-1)
+    , mouseY(-1)
 {
     char buffer[100];
     int i;
@@ -73,7 +77,7 @@ FreecellView::FreecellView(QWidget * parent, FreecellDoc * doc):QWidget(parent)
     // load cards
 
     for (i = 1; i <= 52; i++) {
-        cardpics[i-1] = QPixmap(QString(":pictures/cards/%1.bmp").arg(i));
+        cardpics[i - 1] = QPixmap(QString(":pictures/cards/%1.bmp").arg(i));
     }
 
     cards.clear();
@@ -92,6 +96,9 @@ FreecellView::~FreecellView()
 
 void FreecellView::mousePressEvent(QMouseEvent * e)
 {
+    if (!game_active)
+        return;
+
     QPainter p(this);
 
     int mx = e->x(), my = e->y();
@@ -109,169 +116,117 @@ void FreecellView::mousePressEvent(QMouseEvent * e)
         if (n == 0)
             y = 0;
     }
-    // clicked on card which is already selected ?
-    if (x == selected_card.x && y == selected_card.y && card_selected && x >= 0
-        && game_active) {
-        // remove selection of this card
-        card_selected = 0;
-        if (selected_card.where == FIELD)
-            p.drawPixmap(LEFT + x * CARD_SPACE, 160 + y * 25,
-                         cardpics[cards.getCard(x, y)], 0, 0, CARD_WIDTH - 1,
-                         CARD_HEIGHT);
-        else if (selected_card.where == BOX)
-            p.drawPixmap(LEFT + CARD_WIDTH * x + (x / 4) * 70 + 1, 41,
-                         cardpics[cards.getBoxCard(x)]);
+
+    if (y > -1 && x > -1) {
+        if (!card_selected) {
+            selected_card.x = x;
+            if ((selected_card.y = cards.getNumCardsAtCol(x) - 1) >= 0) {
+                selected_card.where = FIELD;
+                card_selected = true;
+            }
+        } else if (selected_card.where == FIELD) {
+            y = cards.getNumCardsAtCol(x);
+            if (cards.moveCard(selected_card.x, selected_card.y, x, y) == 0) {
+                card_selected = false;
+
+                //draw cards
+                drawMovingCard(selected_card.x, selected_card.y, x, y, &p);
+            }
+        } else if (selected_card.where == BOX) {
+            y = cards.getNumCardsAtCol(x);
+            if (cards.moveCardFromBox(selected_card.x, x, y) == 0) {
+                card_selected = false;
+
+                //draw cards
+                drawMovingCard(selected_card.x, -1, x, y, &p);
+            }
+        }
+
+    }
+    //clicked on a cell
+    if (y == -1 && x < *(parent_class->opt.num_freecells) && x >= 0) {
+        if (!card_selected) {
+            selected_card.x = x;
+            selected_card.y = y;
+            selected_card.where = BOX;
+            if (cards.getBoxCard(x) != NO_CARD)
+                card_selected = true;
+        } else {
+            if (selected_card.x == x && selected_card.where == BOX)
+                card_selected = false;
+            else if (selected_card.where == FIELD) {
+                if (cards.moveCard(selected_card.x, selected_card.y, x) == 0) {
+                    card_selected = false;
+
+                    //draw cards
+                    drawMovingCard(selected_card.x, selected_card.y, x, -1, &p);
+                }
+            }
+        }
     }
 
-    else if (game_active)
-        switch (e->button()) {
-        case Qt::LeftButton:
-
-            if (y > -1 && x > -1) {
-                if (!card_selected) {
-                    selected_card.x = x;
-                    if ((selected_card.y = cards.getNumCardsAtCol(x) - 1) >= 0) {
-                        selected_card.where = FIELD;
-                        card_selected = true;
-                    }
-                } else {
-                    if (selected_card.where == FIELD) {
-                        y = cards.getNumCardsAtCol(x);
-                        if (cards.
-                            moveCard(selected_card.x, selected_card.y, x,
-                                     y) == 0) {
-                            card_selected = false;
-
-                            //draw cards
-                            drawMovingCard(selected_card.x, selected_card.y, x,
-                                           y, &p);
-                        }
-                    }
-
-                    if (selected_card.where == BOX) {
-                        y = cards.getNumCardsAtCol(x);
-                        if (cards.moveCardFromBox(selected_card.x, x, y) == 0) {
-                            card_selected = false;
-
-                            //draw cards
-                            drawMovingCard(selected_card.x, -1, x, y, &p);
-                        }
-                    }
-
-                }
-            }
-            //clicked on a cell
-
-            if (y == -1 && x < *(parent_class->opt.num_freecells) && x >= 0) {
-                if (!card_selected) {
-                    selected_card.x = x;
-                    selected_card.y = y;
-                    selected_card.where = BOX;
-                    if (cards.getBoxCard(x) != NO_CARD)
-                        card_selected = true;
-                } else {
-                    if (selected_card.x == x && selected_card.where == BOX)
-                        card_selected = false;
-                    else if (selected_card.where == FIELD) {
-                        if (cards.
-                            moveCard(selected_card.x, selected_card.y,
-                                     x) == 0) {
-                            card_selected = false;
-
-                            //draw cards
-                            drawMovingCard(selected_card.x, selected_card.y, x,
-                                           -1, &p);
-                        }
-                    }
-                }
-            }
-
-            if (y == -1 && x > 3)
-                if (card_selected) {
-                    if (selected_card.where == BOX)
-                        if (cards.moveCard(selected_card.x, x) == 0) {
-                            card_selected = false;
-                            rest--;
-                            drawMovingCard(selected_card.x, selected_card.y, x,
-                                           -1, &p);
-                        }
-
-                    if (selected_card.where == FIELD)
-                        if (cards.
-                            moveCard(selected_card.x, selected_card.y,
-                                     x) == 0) {
-                            card_selected = false;
-                            rest--;
-                            //draw cards
-                            drawMovingCard(selected_card.x, selected_card.y, x,
-                                           -1, &p);
-                        }
+    if (y == -1 && x > 3) {
+        if (card_selected) {
+            if (selected_card.where == BOX)
+                if (cards.moveCard(selected_card.x, x) == 0) {
+                    card_selected = false;
+                    rest--;
+                    drawMovingCard(selected_card.x, selected_card.y, x, -1, &p);
                 }
 
-            break;
-
-        case Qt::RightButton:
-
-            // column ?
-
-            if (y > -1 && x > -1) {
-                // check cells on the left
-                for (i = 0; i < *(parent_class->opt.num_freecells); i++)
-                    if (cards.moveCard(x, y, i) == 0) {
-                        drawMovingCard(x, y, i, -1, &p);
-                        break;
-                    }
-                // if no cells are free on the left sife check right cells
-                int freecells = 0;
-                for (i = 0; i < *(parent_class->opt.num_freecells); i++)
-                    if (cards.getBoxCard(i) == NO_CARD)
-                        freecells++;
-
-                bool putit = false;
-
-                if (freecells == 0)
-                    for (i = 4; i <= 7; i++) {
-                        if (cards.moveCard(x, y, i) == 0 && !putit) {
-                            rest--;
-                            putit = true;
-                            drawMovingCard(x, y, i, -1, &p);
-                        }
-                    }
-
-            } else
-                //clicked on a card in a cell
-
-            if (y == -1 && x < *(parent_class->opt.num_freecells) && x >= 0)
-                for (i = 4; i <= 7; i++)
+            if (selected_card.where == FIELD)
+                if (cards.moveCard(selected_card.x, selected_card.y, x) == 0) {
+                    card_selected = false;
+                    rest--;
                     //draw cards
-                    if (cards.moveCard(x, i) == 0) {
-                        rest--;
-                        drawMovingCard(x, -1, i, -1, &p);
-                        break;
-                    }
-
-            break;
-
+                    drawMovingCard(selected_card.x, selected_card.y, x, -1, &p);
+                }
         }
+    }
 
     if (card_selected)
         selectCard(selected_card.x, selected_card.y, &p);
 
-    if (rest > 0 && game_active && !card_selected)
+    if (rest > 0 && !card_selected)
         checkAutoMoves(&p);
 
-    if (rest == 0 && game_active) {
+    if (rest == 0) {
         game_active = false;
         p.end();
         parent_class->slotProtocolStop();
         parent_class->won();
     }
 
-    if (checkTurns() == 0 && game_active) {
+    if (checkTurns() == 0) {
         game_active = false;
         p.end();
         parent_class->slotProtocolStop();
         parent_class->lost();
+    }
+    update();
+}
+
+void FreecellView::mouseMoveEvent(QMouseEvent * e)
+{
+    mouseX = e->x();
+    mouseY = e->y();
+    update();
+}
+
+void FreecellView::mouseReleaseEvent(QMouseEvent * e)
+{
+    mouseX = -1;
+    mouseY = -1;
+
+    if (!card_selected)
+        return;
+
+    int mx = e->x(), my = e->y();
+    int y, x;
+
+    getCardPosition(mx, my, &x, &y);
+    if (selected_card.x != x || selected_card.y != y) {
+        mousePressEvent(e);
     }
     update();
 }
@@ -294,7 +249,7 @@ void FreecellView::paintEvent(QPaintEvent * event)
 
     for (i = 0; i < 8; i++)
         if (i < *(parent_class->opt.num_freecells) || i > 3)
-            p.drawPixmap(LEFT + CARD_WIDTH * i + (i / 4) * 70, 40, empty);
+            p.drawPixmap(LEFT + CARD_SPACE * i + (i / 4) * 70, 40, empty);
 
     // draw columns
 
@@ -313,12 +268,19 @@ void FreecellView::paintEvent(QPaintEvent * event)
             if (cards.getBoxCard(i) != NO_CARD)
                 if (LEFT + CARD_WIDTH * i + (i / 4) * 70 + 1 + CARD_WIDTH >
                     (event->rect()).left())
-                    p.drawPixmap(LEFT + CARD_WIDTH * i + (i / 4) * 70 + 1, 41,
+                    p.drawPixmap(LEFT + CARD_SPACE * i + (i / 4) * 70 + 1, 41,
                                  cardpics[cards.getBoxCard(i)], 0, 0,
                                  CARD_WIDTH - 1, CARD_HEIGHT);
 
-    if (card_selected)
+    if (card_selected) {
         selectCard(selected_card.x, selected_card.y, &p);
+
+        if (mouseX >= 0 && mouseY >= 0) {
+            QPixmap pm =
+                cardpics[cards.getCard(selected_card.x, selected_card.y)];
+            p.drawPixmap(mouseX - CARD_WIDTH / 2, mouseY - CARD_HEIGHT / 2, pm);
+        }
+    }
 
     if (parent_class->protocol_fd != NULL) {
         p.setPen(QColor(0, 255, 0));
@@ -362,7 +324,7 @@ void FreecellView::getCardPosition(int mx, int my, int *x, int *y)
          || (mx > 180 && mx < 250) || (mx > 260 && mx < 330)) && (my > 40
                                                                   && my <
                                                                   140)) {
-        *x = (mx - LEFT) / CARD_WIDTH;
+        *x = (mx - LEFT) / CARD_SPACE;
         *y = -1;
     }
     // clicked on cells 4..7
@@ -370,7 +332,7 @@ void FreecellView::getCardPosition(int mx, int my, int *x, int *y)
          || (mx > 590 && mx < 660) || (mx > 670 && mx < 740)) && (my > 40
                                                                   && my <
                                                                   140)) {
-        *x = (mx - 410) / CARD_WIDTH + 4;
+        *x = (mx - 410) / CARD_SPACE + 4;
         *y = -1;
     }
 
@@ -412,8 +374,8 @@ int FreecellView::checkTurns()
         if (cards.getNumCardsAtCol(i) > 0)
             for (j = 0; j < 8; j++)
                 if (j < *(parent_class->opt.num_freecells) || j > 3)
-                    if (cards.
-                        checkMoveToBox(i, cards.getNumCardsAtCol(i) - 1, j))
+                    if (cards.checkMoveToBox
+                        (i, cards.getNumCardsAtCol(i) - 1, j))
                         turns++;
 
     // count possible turns from cell to cell
@@ -485,9 +447,9 @@ void FreecellView::drawMovingCard(int sx, int sy, int dx, int dy, QPainter * p)
             p->fillRect(LEFT + sx * CARD_SPACE, 160 + sy * 25, CARD_WIDTH - 1,
                         CARD_HEIGHT, QBrush(QColor(0, 128, 0)));
         else
-            p->drawPixmap(LEFT + sx * CARD_SPACE, 160 + sy * 25, background_picture,
-                          LEFT + sx * CARD_SPACE, 160 + sy * 25, CARD_WIDTH - 1,
-                          CARD_HEIGHT);
+            p->drawPixmap(LEFT + sx * CARD_SPACE, 160 + sy * 25,
+                          background_picture, LEFT + sx * CARD_SPACE,
+                          160 + sy * 25, CARD_WIDTH - 1, CARD_HEIGHT);
         if (sy - 1 >= 0)
             if (cards.getCard(sx, sy - 1) != NO_CARD)
                 p->drawPixmap(LEFT + sx * CARD_SPACE, 160 + (sy - 1) * 25,
@@ -519,7 +481,7 @@ void FreecellView::moveCard(int x1, int y1, int x2, int y2, QPixmap card)
 
     QPixmap screen(CARD_WIDTH + 1, CARD_HEIGHT + 1);
 
-    int c = LEFT;                 // number of steps
+    int c = LEFT;               // number of steps
     int ox = x1 + (x2 - x1) / c, oy = y1 + (y2 - y1) / c;
     int px, py;
     int i;
@@ -586,8 +548,8 @@ void FreecellView::checkAutoMoves(QPainter * p)
         for (i = 0; i < 8; i++)
             if (cards.getNumCardsAtCol(i) > 0)
                 for (j = 4; j < 8; j++)
-                    if (cards.
-                        checkMoveToBox(i, cards.getNumCardsAtCol(i) - 1, j)) {
+                    if (cards.checkMoveToBox
+                        (i, cards.getNumCardsAtCol(i) - 1, j)) {
                         move = true;
 
                         c = cards.getCard(i, cards.getNumCardsAtCol(i) - 1) / 4;

@@ -38,7 +38,9 @@ class FreecellView : public QWidget
   FreecellView(QWidget *parent=0, FreecellDoc* doc=0);
   ~FreecellView();
  	
- 	void mousePressEvent(QMouseEvent *e);
+  void mousePressEvent(QMouseEvent *e);
+  void mouseMoveEvent(QMouseEvent *e);
+  void mouseReleaseEvent(QMouseEvent *e);
   void paintEvent(QPaintEvent *event);
   void getCardPosition(int mx, int my, int *x, int *y);
   void mouseDoubleClickEvent(QMouseEvent *e);
@@ -81,6 +83,8 @@ class FreecellView : public QWidget
 
   /** holds information about the selected cards */
   struct { int x, y, where; } selected_card;
+
+  int mouseX, mouseY;
 
 };
 
