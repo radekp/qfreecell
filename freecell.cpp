@@ -272,10 +272,9 @@ void Freecell::initDoc()
 
 void Freecell::initView()
 { 
-  ////////////////////////////////////////////////////////////////////
-  // set the main widget here
   view=new FreecellView(this, doc);
   setCentralWidget(view);
+  view->enterFullScreen();
 }
 
 bool Freecell::queryExit()
