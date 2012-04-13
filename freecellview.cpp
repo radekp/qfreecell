@@ -102,6 +102,8 @@ void FreecellView::mousePressEvent(QMouseEvent * e)
     QPainter p(this);
 
     int mx = e->x(), my = e->y();
+    mouseX = mx;
+    mouseY = my;
     int y, x, n;
     int i;
 
@@ -228,6 +230,7 @@ void FreecellView::mouseReleaseEvent(QMouseEvent * e)
     if (selected_card.x != x || selected_card.y != y) {
         mousePressEvent(e);
     }
+    card_selected = false;
     update();
 }
 
@@ -253,16 +256,22 @@ void FreecellView::paintEvent(QPaintEvent * event)
 
     // draw columns
 
-    for (i = 0; i < 8; i++)
-        for (j = 0; j < 15; j++)
-            if (cards.getCard(i, j) != NO_CARD)
-                if (LEFT + i * CARD_SPACE + CARD_WIDTH > (event->rect()).left())
-                    p.drawPixmap(LEFT + i * CARD_SPACE, 160 + j * 25,
-                                 cardpics[cards.getCard(i, j)], 0, 0,
-                                 CARD_WIDTH - 1, CARD_HEIGHT);
+    for (i = 0; i < 8; i++) {
+        for (j = 0; j < 15; j++) {
+            if (cards.getCard(i, j) == NO_CARD)
+                continue;
+            if (LEFT + i * CARD_SPACE + CARD_WIDTH <= (event->rect()).left())
+                continue;
+            if (card_selected && selected_card.x == i && selected_card.y == j)
+                continue;
+
+            p.drawPixmap(LEFT + i * CARD_SPACE, 160 + j * 25,
+                         cardpics[cards.getCard(i, j)], 0, 0,
+                         CARD_WIDTH - 1, CARD_HEIGHT);
+        }
+    }
 
     // draw cells
-
     for (i = 0; i < 8; i++)
         if (i < *(parent_class->opt.num_freecells) || i > 3)
             if (cards.getBoxCard(i) != NO_CARD)
@@ -273,8 +282,6 @@ void FreecellView::paintEvent(QPaintEvent * event)
                                  CARD_WIDTH - 1, CARD_HEIGHT);
 
     if (card_selected) {
-        selectCard(selected_card.x, selected_card.y, &p);
-
         if (mouseX >= 0 && mouseY >= 0) {
             QPixmap pm =
                 cardpics[cards.getCard(selected_card.x, selected_card.y)];
