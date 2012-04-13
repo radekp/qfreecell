@@ -43,7 +43,8 @@
 #include <QtopiaServiceRequest>
 #endif
 
-Freecell::Freecell(char *dir)
+Freecell::Freecell(QWidget *parent, Qt::WFlags flags)
+    : QMainWindow(parent, flags)
 {
 #ifdef QTOPIA
     QtopiaServiceRequest svreq("RotationManager", "setCurrentRotation(int)");
@@ -55,7 +56,7 @@ Freecell::Freecell(char *dir)
 	FILE *f;
 
 	// create ~/.qfreecell	
-	QDir d(dir);
+        QDir d("/tmp");
 	char buffer[200];
 	
 	// save location of binary

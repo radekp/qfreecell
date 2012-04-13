@@ -44,6 +44,9 @@ class FreecellView : public QWidget
   void paintEvent(QPaintEvent *event);
   void getCardPosition(int mx, int my, int *x, int *y);
   void mouseDoubleClickEvent(QMouseEvent *e);
+  bool event(QEvent *);
+  void enterFullScreen();
+
   /**  */
   int checkTurns();
   /**  */

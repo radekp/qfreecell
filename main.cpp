@@ -15,15 +15,25 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <qapplication.h>
-#include <qfont.h>
+#ifdef QTOPIA
 
+#include <qtopiaapplication.h>
+#include "freecell.h"
+
+QTOPIA_ADD_APPLICATION(QTOPIA_TARGET,Freecell)
+QTOPIA_MAIN
+
+#else
+
+#include <QtGui/QApplication>
 #include "freecell.h"
 
 int main(int argc, char *argv[])
 {
-  QApplication a(argc, argv);    
-  Freecell w(argv[0]);
-  w.show();
-  return a.exec();
+    QApplication a(argc, argv);
+    Freecell w;
+    w.show();
+    return a.exec();
 }
+
+#endif

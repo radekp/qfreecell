@@ -143,8 +143,9 @@ void FreecellView::mousePressEvent(QMouseEvent * e)
                 drawMovingCard(selected_card.x, -1, x, y, &p);
             }
         }
-
     }
+    enterFullScreen();
+
     //clicked on a cell
     if (y == -1 && x < *(parent_class->opt.num_freecells) && x >= 0) {
         if (!card_selected) {
@@ -232,6 +233,34 @@ void FreecellView::mouseReleaseEvent(QMouseEvent * e)
     }
     card_selected = false;
     update();
+}
+
+bool FreecellView::event(QEvent *event)
+{
+#ifdef QTOPIA
+    if(event->type() == QEvent::WindowDeactivate)
+    {
+        lower();
+    }
+    else if(event->type() == QEvent::WindowActivate)
+    {
+        QString title = windowTitle();
+        setWindowTitle(QLatin1String("_allow_on_top_"));
+        raise();
+        setWindowTitle(title);
+    }
+#endif
+    return QWidget::event(event);
+}
+
+void FreecellView::enterFullScreen()
+{
+#ifdef QTOPIA
+    // Show editor view in full screen
+    setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
+    setWindowState(Qt::WindowFullScreen);
+    raise();
+#endif
 }
 
 void FreecellView::paintEvent(QPaintEvent * event)

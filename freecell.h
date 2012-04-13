@@ -57,7 +57,7 @@ class Freecell : public QMainWindow
   
   public:
     /** construtor */
-    Freecell(char *dir);
+    Freecell(QWidget *parent = 0, Qt::WFlags flags = 0);
     /** destructor */
     ~Freecell();
     /** initMenuBar creates the menu_bar and inserts the menuitems */
