@@ -35,7 +35,7 @@
 #else
 
 #define LEFT 20
-#define CARD_WIDTH 80
+#define CARD_WIDTH 72
 #define CARD_SPACE 90
 
 #endif
