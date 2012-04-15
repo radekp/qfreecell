@@ -281,14 +281,20 @@ void FreecellView::paintEvent(QPaintEvent * event)
     }
 
     // draw cells
-    for (i = 0; i < 8; i++)
-        if (i < *(parent_class->opt.num_freecells) || i > 3)
-            if (cards.getBoxCard(i) != NO_CARD)
+    for (i = 0; i < 8; i++) {
+        if (i < *(parent_class->opt.num_freecells) || i > 3) {
+            if (cards.getBoxCard(i) != NO_CARD) {
                 if (LEFT + CARD_WIDTH * i + (i / 4) * 70 + 1 + CARD_WIDTH >
-                    (event->rect()).left())
+                    (event->rect()).left()) {
+                    if(card_selected && i == selected_card.x)
+                        continue;
                     p.drawPixmap(LEFT + CARD_SPACE * i + (i / 4) * 70 + 1, 41,
                                  cardpics[cards.getBoxCard(i)], 0, 0,
                                  CARD_WIDTH - 1, CARD_HEIGHT);
+                }
+            }
+        }
+    }
 
     if (card_selected) {
         if (mouseX >= 0 && mouseY >= 0) {
