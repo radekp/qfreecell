@@ -82,6 +82,7 @@ private:
 
     int cardWidth, cardHeight;
     int spaceWidth, spaceHeight;
+    int cardLeft;
 
 public:
     /** empty field */

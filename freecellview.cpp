@@ -27,20 +27,6 @@
 #include <QMouseEvent>
 #include <QDebug>
 
-#ifdef QTOPIA
-
-#define LEFT 4
-#define CARD_WIDTH 72
-#define CARD_SPACE 80
-
-#else
-
-#define LEFT 20
-#define CARD_WIDTH 72
-#define CARD_SPACE 90
-
-#endif
-
 FreecellView::FreecellView(QWidget * parent, FreecellDoc * doc)
 :  QWidget(parent)
     , svg(QString(":/cards.svg"), this)
@@ -101,6 +87,8 @@ void FreecellView::renderCards()
 
     spaceWidth = width() / 8;
     spaceHeight = height() / 8;
+
+    cardLeft = 4;
 
     svg.render(&p, "BACK_RED1", QRectF(0, 0, cardWidth, cardHeight));
 
@@ -269,21 +257,21 @@ void FreecellView::paintEvent(QPaintEvent * event)
     // clear cells
     for (i = 0; i < 8; i++)
         if (i < *(parent_class->opt.num_freecells) || i > 3)
-            p.drawPixmap(LEFT + CARD_SPACE * i + (i / 4) * 70, 40, empty);
+            p.drawPixmap(cardLeft + spaceWidth * i + (i / 4) * 70, 40, empty);
 
     // draw columns
     for (i = 0; i < 8; i++) {
         for (j = 0; j < 15; j++) {
             if (cards.getCard(i, j) == NO_CARD)
                 continue;
-            if (LEFT + i * CARD_SPACE + CARD_WIDTH <= (event->rect()).left())
+            if (cardLeft + i * spaceWidth + cardWidth <= (event->rect()).left())
                 continue;
             if (card_selected && selected_card.x == i && selected_card.y == j)
                 continue;
 
-            p.drawPixmap(LEFT + i * CARD_SPACE, 160 + j * 25,
+            p.drawPixmap(cardLeft + i * spaceWidth, 160 + j * 25,
                          cardpics[cards.getCard(i, j)], 0, 0,
-                         CARD_WIDTH - 1, CARD_HEIGHT);
+                         cardWidth - 1, CARD_HEIGHT);
         }
     }
 
@@ -291,13 +279,13 @@ void FreecellView::paintEvent(QPaintEvent * event)
     for (i = 0; i < 8; i++) {
         if (i < *(parent_class->opt.num_freecells) || i > 3) {
             if (cards.getBoxCard(i) != NO_CARD) {
-                if (LEFT + CARD_WIDTH * i + (i / 4) * 70 + 1 + CARD_WIDTH >
+                if (cardLeft + cardWidth * i + (i / 4) * 70 + 1 + cardWidth >
                     (event->rect()).left()) {
                     if(card_selected && i == selected_card.x && selected_card.y == -1)
                         continue;
-                    p.drawPixmap(LEFT + CARD_SPACE * i + (i / 4) * 70 + 1, 41,
+                    p.drawPixmap(cardLeft + spaceWidth * i + (i / 4) * 70 + 1, 41,
                                  cardpics[cards.getBoxCard(i)], 0, 0,
-                                 CARD_WIDTH - 1, CARD_HEIGHT);
+                                 cardWidth - 1, CARD_HEIGHT);
                 }
             }
         }
@@ -315,7 +303,7 @@ void FreecellView::paintEvent(QPaintEvent * event)
             }
 
             QPixmap pm = cardpics[card];
-            p.drawPixmap(mouseX - CARD_WIDTH / 2, mouseY - CARD_HEIGHT / 2, pm);
+            p.drawPixmap(mouseX - cardWidth / 2, mouseY - CARD_HEIGHT / 2, pm);
         }
     }
 
@@ -349,19 +337,19 @@ void FreecellView::getCardPosition(int mx, int my, int *x, int *y)
     *x = *y = -1;
 
     // clicked on column ?
-    if (((mx > LEFT && mx < 90) || (mx > 110 && mx < 180) ||
+    if (((mx > cardLeft && mx < 90) || (mx > 110 && mx < 180) ||
          (mx > 200 && mx < 270) || (mx > 290 && mx < 360) ||
          (mx > 380 && mx < 450) || (mx > 470 && mx < 540) ||
          (mx > 560 && mx < 630) || (mx > 650 && mx < 720)) && my > 160) {
         *y = (my - 160) / 25;
-        *x = (mx - LEFT) / CARD_SPACE;
+        *x = (mx - cardLeft) / spaceWidth;
     }
     // clicked on cells 0..3
-    if (((mx > LEFT && mx < 90) || (mx > 100 && mx < 170)
+    if (((mx > cardLeft && mx < 90) || (mx > 100 && mx < 170)
          || (mx > 180 && mx < 250) || (mx > 260 && mx < 330)) && (my > 40
                                                                   && my <
                                                                   140)) {
-        *x = (mx - LEFT) / CARD_SPACE;
+        *x = (mx - cardLeft) / spaceWidth;
         *y = -1;
     }
     // clicked on cells 4..7
@@ -369,7 +357,7 @@ void FreecellView::getCardPosition(int mx, int my, int *x, int *y)
          || (mx > 590 && mx < 660) || (mx > 670 && mx < 740)) && (my > 40
                                                                   && my <
                                                                   140)) {
-        *x = (mx - 410) / CARD_SPACE + 4;
+        *x = (mx - 410) / spaceWidth + 4;
         *y = -1;
     }
 
@@ -454,21 +442,21 @@ void FreecellView::drawMovingCard(int sx, int sy, int dx, int dy, QPainter * p)
     switch (sy) {
     case -1:                   // move card from cell...
 
-        x = LEFT + CARD_WIDTH * sx + (sx / 4) * 70;
+        x = cardLeft + cardWidth * sx + (sx / 4) * 70;
         y = 41;
 
         // clear cell       
-        p->drawPixmap(LEFT + CARD_WIDTH * sx + (sx / 4) * 70, 40, empty);
+        p->drawPixmap(cardLeft + cardWidth * sx + (sx / 4) * 70, 40, empty);
 
         switch (dy) {
         case -1:               // ...to cell
-            nx = LEFT + CARD_WIDTH * dx + (dx / 4) * 70 + 1;
+            nx = cardLeft + cardWidth * dx + (dx / 4) * 70 + 1;
             ny = 41;
             moveCard(x, y, nx, ny, cardpics[cards.getBoxCard(dx)]);
             break;
 
         default:               // ...to column
-            nx = LEFT + dx * CARD_SPACE;
+            nx = cardLeft + dx * spaceWidth;
             ny = 160 + dy * 25;
             moveCard(x, y, nx, ny, cardpics[cards.getCard(dx, dy)]);
             break;
@@ -477,31 +465,31 @@ void FreecellView::drawMovingCard(int sx, int sy, int dx, int dy, QPainter * p)
 
     default:                   // move card from column...
 
-        x = LEFT + sx * CARD_SPACE;
+        x = cardLeft + sx * spaceWidth;
         y = 160 + sy * 25;
 
         if (!*(parent_class->opt.background_enabled))
-            p->fillRect(LEFT + sx * CARD_SPACE, 160 + sy * 25, CARD_WIDTH - 1,
+            p->fillRect(cardLeft + sx * spaceWidth, 160 + sy * 25, cardWidth - 1,
                         CARD_HEIGHT, QBrush(QColor(0, 128, 0)));
         else
-            p->drawPixmap(LEFT + sx * CARD_SPACE, 160 + sy * 25,
-                          background_picture, LEFT + sx * CARD_SPACE,
-                          160 + sy * 25, CARD_WIDTH - 1, CARD_HEIGHT);
+            p->drawPixmap(cardLeft + sx * spaceWidth, 160 + sy * 25,
+                          background_picture, cardLeft + sx * spaceWidth,
+                          160 + sy * 25, cardWidth - 1, CARD_HEIGHT);
         if (sy - 1 >= 0)
             if (cards.getCard(sx, sy - 1) != NO_CARD)
-                p->drawPixmap(LEFT + sx * CARD_SPACE, 160 + (sy - 1) * 25,
+                p->drawPixmap(cardLeft + sx * spaceWidth, 160 + (sy - 1) * 25,
                               cardpics[cards.getCard(sx, sy - 1)], 0, 0,
-                              CARD_WIDTH - 1, CARD_HEIGHT);
+                              cardWidth - 1, CARD_HEIGHT);
 
         switch (dy) {
         case -1:               // ...to cell
-            nx = LEFT + CARD_WIDTH * dx + (dx / 4) * 70 + 1;
+            nx = cardLeft + cardWidth * dx + (dx / 4) * 70 + 1;
             ny = 41;
             moveCard(x, y, nx, ny, cardpics[cards.getBoxCard(dx)]);
             break;
 
         default:               // ...to column
-            nx = LEFT + dx * CARD_SPACE;
+            nx = cardLeft + dx * spaceWidth;
             ny = 160 + dy * 25;
             moveCard(x, y, nx, ny, cardpics[cards.getCard(dx, dy)]);
             break;
@@ -516,28 +504,28 @@ void FreecellView::drawMovingCard(int sx, int sy, int dx, int dy, QPainter * p)
 void FreecellView::moveCard(int x1, int y1, int x2, int y2, QPixmap card)
 {
 
-    QPixmap screen(CARD_WIDTH + 1, CARD_HEIGHT + 1);
+    QPixmap screen(cardWidth + 1, CARD_HEIGHT + 1);
 
-    int c = LEFT;               // number of steps
+    int c = cardLeft;               // number of steps
     int ox = x1 + (x2 - x1) / c, oy = y1 + (y2 - y1) / c;
     int px, py;
     int i;
 
     // save background
-//  bitBlt((QPaintDevice*)&screen, 0, 0, this, ox, oy, CARD_WIDTH, CARD_HEIGHT);
+//  bitBlt((QPaintDevice*)&screen, 0, 0, this, ox, oy, cardWidth, CARD_HEIGHT);
 
     for (i = 1; i <= c; i++) {
         px = x1 + i * (x2 - x1) / c;
         py = y1 + i * (y2 - y1) / c;
 
         // restore background
-//      bitBlt(this, ox, oy, (QPaintDevice*)&screen, 0, 0, CARD_WIDTH, CARD_HEIGHT);
+//      bitBlt(this, ox, oy, (QPaintDevice*)&screen, 0, 0, cardWidth, CARD_HEIGHT);
 
         // save background
-//      bitBlt((QPaintDevice*)&screen, 0, 0, this, px, py, CARD_WIDTH, CARD_HEIGHT);
+//      bitBlt((QPaintDevice*)&screen, 0, 0, this, px, py, cardWidth, CARD_HEIGHT);
 
         // draw card on screen
-//      bitBlt(this, px, py, (QPaintDevice*)&card, 0, 0, CARD_WIDTH-1, CARD_HEIGHT);
+//      bitBlt(this, px, py, (QPaintDevice*)&card, 0, 0, cardWidth-1, CARD_HEIGHT);
 
         ox = x1 + i * (x2 - x1) / c;
         oy = y1 + i * (y2 - y1) / c;
@@ -553,11 +541,11 @@ void FreecellView::selectCard(int x, int y, QPainter * p)
 
     if (y == -1)                // cell
     {
-        x1 = LEFT + CARD_WIDTH * x + (x / 4) * 70 + 1;
+        x1 = cardLeft + cardWidth * x + (x / 4) * 70 + 1;
         y1 = 41;
     } else                      // column
     {
-        x1 = LEFT + CARD_SPACE * x;
+        x1 = cardLeft + spaceWidth * x;
         y1 = 160 + y * 25;
     }
 
@@ -565,8 +553,8 @@ void FreecellView::selectCard(int x, int y, QPainter * p)
 
     if (y != 0 || x < *(parent_class->opt.num_freecells) || x > 3) {
         p->setPen(QColor(255, 0, 0));
-        p->drawRect(x1, y1, CARD_WIDTH - 2, CARD_HEIGHT - 1);
-        p->drawRect(x1 + 1, y1 + 1, CARD_WIDTH - 4, CARD_HEIGHT - 3);
+        p->drawRect(x1, y1, cardWidth - 2, CARD_HEIGHT - 1);
+        p->drawRect(x1 + 1, y1 + 1, cardWidth - 4, CARD_HEIGHT - 3);
     }
 }
 
