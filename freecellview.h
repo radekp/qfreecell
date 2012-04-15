@@ -56,7 +56,7 @@ class FreecellView : public QWidget
   /**  */
   void selectCard(int x, int y, QPainter *p);
   /**  */
-  void checkAutoMoves(QPainter *p);
+  void checkAutoMoves();
   
   Cards cards;
 	int   card_selected;

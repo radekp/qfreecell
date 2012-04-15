@@ -99,13 +99,10 @@ void FreecellView::mousePressEvent(QMouseEvent * e)
     if (!game_active)
         return;
 
-    QPainter p(this);
-
     int mx = e->x(), my = e->y();
     mouseX = mx;
     mouseY = my;
     int y, x, n;
-    int i;
 
     // get card coordiates
     getCardPosition(mx, my, &x, &y);
@@ -130,17 +127,11 @@ void FreecellView::mousePressEvent(QMouseEvent * e)
             y = cards.getNumCardsAtCol(x);
             if (cards.moveCard(selected_card.x, selected_card.y, x, y) == 0) {
                 card_selected = false;
-
-                //draw cards
-                drawMovingCard(selected_card.x, selected_card.y, x, y, &p);
             }
         } else if (selected_card.where == BOX) {
             y = cards.getNumCardsAtCol(x);
             if (cards.moveCardFromBox(selected_card.x, x, y) == 0) {
                 card_selected = false;
-
-                //draw cards
-                drawMovingCard(selected_card.x, -1, x, y, &p);
             }
         }
     }
@@ -160,9 +151,6 @@ void FreecellView::mousePressEvent(QMouseEvent * e)
             else if (selected_card.where == FIELD) {
                 if (cards.moveCard(selected_card.x, selected_card.y, x) == 0) {
                     card_selected = false;
-
-                    //draw cards
-                    drawMovingCard(selected_card.x, selected_card.y, x, -1, &p);
                 }
             }
         }
@@ -174,35 +162,27 @@ void FreecellView::mousePressEvent(QMouseEvent * e)
                 if (cards.moveCard(selected_card.x, x) == 0) {
                     card_selected = false;
                     rest--;
-                    drawMovingCard(selected_card.x, selected_card.y, x, -1, &p);
                 }
 
             if (selected_card.where == FIELD)
                 if (cards.moveCard(selected_card.x, selected_card.y, x) == 0) {
                     card_selected = false;
                     rest--;
-                    //draw cards
-                    drawMovingCard(selected_card.x, selected_card.y, x, -1, &p);
                 }
         }
     }
 
-    if (card_selected)
-        selectCard(selected_card.x, selected_card.y, &p);
-
     if (rest > 0 && !card_selected)
-        checkAutoMoves(&p);
+        checkAutoMoves();
 
     if (rest == 0) {
         game_active = false;
-        p.end();
         parent_class->slotProtocolStop();
         parent_class->won();
     }
 
     if (checkTurns() == 0) {
         game_active = false;
-        p.end();
         parent_class->slotProtocolStop();
         parent_class->lost();
     }
@@ -570,7 +550,7 @@ void FreecellView::selectCard(int x, int y, QPainter * p)
 }
 
 /**  */
-void FreecellView::checkAutoMoves(QPainter * p)
+void FreecellView::checkAutoMoves()
 {
 
     int i, j, k, moves;
@@ -612,8 +592,6 @@ void FreecellView::checkAutoMoves(QPainter * p)
                         if (move)   // 0 = "A", 12 = "2"
                         {
                             cards.moveCard(i, cards.getNumCardsAtCol(i) - 1, j);
-                            drawMovingCard(i, cards.getNumCardsAtCol(i), j, -1,
-                                           p);
                             rest--;
                             moves++;
                             break;
@@ -651,7 +629,6 @@ void FreecellView::checkAutoMoves(QPainter * p)
                         if (move)   // 0 = "A", 12 = "2"
                         {
                             cards.moveCard(i, j);
-                            drawMovingCard(i, -1, j, -1, p);
                             rest--;
                             moves++;
                             break;
