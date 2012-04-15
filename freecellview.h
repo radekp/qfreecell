@@ -58,20 +58,14 @@ public:
 private:
 
     QSvgRenderer svg;
-
-    /** images of cards */
     QPixmap cardpics[52];
-
     int cardWidth, cardHeight;
     int spaceWidth, spaceHeight;
     int cardLeft;
+    void renderCards();
 
 public:
-    /** empty field */
     QPixmap empty;
-    /**  */
-    QPixmap background_picture;
-    /**  */
     int moves;
 
     /** holds information about the selected cards */
@@ -79,7 +73,8 @@ public:
 
     int mouseX, mouseY;
 
-    void renderCards();
+public slots:
+    void slotDocumentChanged();
 };
 
 #endif

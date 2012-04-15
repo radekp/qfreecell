@@ -251,15 +251,6 @@ void FreecellView::paintEvent(QPaintEvent * event)
     int i, j;
     QPainter p(this);
 
-    if (!*(parent_class->opt.background_enabled))
-        p.fillRect(event->rect().x(), event->rect().y(),
-                   event->rect().width(), event->rect().height(),
-                   QBrush(QColor(0, 128, 0)));
-    else
-        p.drawPixmap(event->rect().x(), event->rect().y(), background_picture,
-                     event->rect().x(), event->rect().y(),
-                     event->rect().width(), event->rect().height());
-
     // clear cells
     for (i = 0; i < 8; i++)
         if (i < *(parent_class->opt.num_freecells) || i > 3)
@@ -474,3 +465,9 @@ void FreecellView::checkAutoMoves()
 
     } while (moves > 0);
 }
+
+void FreecellView::slotDocumentChanged()
+{
+    update();
+}
+

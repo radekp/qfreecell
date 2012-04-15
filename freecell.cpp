@@ -509,22 +509,8 @@ void Freecell::closeEvent(QCloseEvent *e)
 }
 
 /**  */
-void Freecell::slotFileOptions(){
-
-	*opt.spinbox_freecells_min = *opt.num_freecells - view->cards.getNumFreecells(*opt.num_freecells);	
-	
-	COptions options(this, "Options", &opt);
-	
-	if(options.exec()==QDialog::Accepted)
-	{
-		view->empty.fill(QColor(0,0,0));
-		view->background_picture.fill(QColor(0,0,0));
-		
-		view->empty.load(opt.empty_file);
-		view->background_picture.load(opt.background_file);
-		
-                view->repaint();
-	}
+void Freecell::slotFileOptions()
+{
 }
 
 /**  */
