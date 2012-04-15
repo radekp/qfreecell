@@ -63,5 +63,6 @@
         <file>pictures/freecells/empty8.bmp</file>
         <file>pictures/freecells/empty9.bmp</file>
         <file>pictures/freecells/empty10.bmp</file>
+        <file>cards.svg</file>
     </qresource>
 </RCC>

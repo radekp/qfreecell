@@ -43,6 +43,7 @@
 
 FreecellView::FreecellView(QWidget * parent, FreecellDoc * doc)
 :  QWidget(parent)
+    , svg(QString(":/cards.svg"), this)
     , mouseX(-1)
     , mouseY(-1)
 {
@@ -82,17 +83,34 @@ FreecellView::FreecellView(QWidget * parent, FreecellDoc * doc)
 
     cards.clear();
     card_selected = false;
+
+    renderCards();
 }
 
 FreecellView::~FreecellView()
 {
 }
 
-//+====================================================================
-//
-// void FreeCellView::mousePressEvent(QMouseEvent *e)
-//
-//-====================================================================
+void FreecellView::renderCards()
+{
+    QPixmap pix = QPixmap(cardWidth, cardHeight);
+    QPainter p(&pix);
+
+    cardWidth = width() / 10;
+    cardHeight = height() / 10;
+
+    spaceWidth = width() / 8;
+    spaceHeight = height() / 8;
+
+    svg.render(&p, "BACK_RED1", QRectF(0, 0, cardWidth, cardHeight));
+
+    empty = pix;
+}
+
+void FreecellView::resizeEvent(QResizeEvent *event)
+{
+    renderCards();
+}
 
 void FreecellView::mousePressEvent(QMouseEvent * e)
 {

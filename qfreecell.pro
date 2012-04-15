@@ -1,6 +1,7 @@
 # -------------------------------------------------
 # Project created by QtCreator 2012-04-11T15:38:11
 # -------------------------------------------------
+QT       += core gui svg
 TARGET = qfreecell
 TEMPLATE = app
 SOURCES += main.cpp \

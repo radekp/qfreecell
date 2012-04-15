@@ -21,6 +21,7 @@
 // include files for QT
 #include <qwidget.h>
 #include <qpixmap.h>
+#include <QSvgRenderer>
 
 // application specific includes
 #include "freecelldoc.h"
@@ -32,65 +33,70 @@
 
 class FreecellView : public QWidget
 {
-  Q_OBJECT
-  public:
+    Q_OBJECT
+public:
 
-  FreecellView(QWidget *parent=0, FreecellDoc* doc=0);
-  ~FreecellView();
- 	
-  void mousePressEvent(QMouseEvent *e);
-  void mouseMoveEvent(QMouseEvent *e);
-  void mouseReleaseEvent(QMouseEvent *e);
-  void paintEvent(QPaintEvent *event);
-  void getCardPosition(int mx, int my, int *x, int *y);
-  void mouseDoubleClickEvent(QMouseEvent *e);
-  bool event(QEvent *);
-  void enterFullScreen();
+    FreecellView(QWidget *parent=0, FreecellDoc* doc=0);
+    ~FreecellView();
 
-  /**  */
-  int checkTurns();
-  /**  */
-  void drawMovingCard(int sx, int sy, int dx, int dy, QPainter *p);
-  /**  */
-  void moveCard(int x1, int y1, int x2, int y2, QPixmap card);
-  /**  */
-  void selectCard(int x, int y, QPainter *p);
-  /**  */
-  void checkAutoMoves();
-  
-  Cards cards;
-	int   card_selected;
-  /**  */
-  int rest;
-  /**  */
-  bool game_active;
-  /**  */
-  class Freecell* parent_class;
-		
-  protected slots:
+    void mousePressEvent(QMouseEvent *e);
+    void mouseMoveEvent(QMouseEvent *e);
+    void mouseReleaseEvent(QMouseEvent *e);
+    void paintEvent(QPaintEvent *event);
+    void getCardPosition(int mx, int my, int *x, int *y);
+    void mouseDoubleClickEvent(QMouseEvent *e);
+    void resizeEvent ( QResizeEvent * event );
+    bool event(QEvent *);
+    void enterFullScreen();
 
-  void slotDocumentChanged();
-  
-	private: // Private attributes
-  	
-  /** images of cards */
-  QPixmap cardpics[52];
+    /**  */
+    int checkTurns();
+    /**  */
+    void drawMovingCard(int sx, int sy, int dx, int dy, QPainter *p);
+    /**  */
+    void moveCard(int x1, int y1, int x2, int y2, QPixmap card);
+    /**  */
+    void selectCard(int x, int y, QPainter *p);
+    /**  */
+    void checkAutoMoves();
 
-	public:
-  /** empty field */
-  QPixmap empty;
-  /**  */
-  QPixmap background_picture;
-  /**  */
-  int moves;
+    Cards cards;
+    int   card_selected;
+    /**  */
+    int rest;
+    /**  */
+    bool game_active;
+    /**  */
+    class Freecell* parent_class;
 
-  /** holds information about the selected cards */
-  struct { int x, y, where; } selected_card;
+protected slots:
 
-  int mouseX, mouseY;
+    void slotDocumentChanged();
 
+private:
+
+    QSvgRenderer svg;
+
+    /** images of cards */
+    QPixmap cardpics[52];
+
+    int cardWidth, cardHeight;
+    int spaceWidth, spaceHeight;
+
+public:
+    /** empty field */
+    QPixmap empty;
+    /**  */
+    QPixmap background_picture;
+    /**  */
+    int moves;
+
+    /** holds information about the selected cards */
+    struct { int x, y, where; } selected_card;
+
+    int mouseX, mouseY;
+
+    void renderCards();
 };
 
 #endif
-
-
