@@ -117,75 +117,22 @@ void FreecellView::mousePressEvent(QMouseEvent * e)
     }
 
     if (y > -1 && x > -1) {
-        if (!card_selected) {
-            selected_card.x = x;
-            if ((selected_card.y = cards.getNumCardsAtCol(x) - 1) >= 0) {
-                selected_card.where = FIELD;
-                card_selected = true;
-            }
-        } else if (selected_card.where == FIELD) {
-            y = cards.getNumCardsAtCol(x);
-            if (cards.moveCard(selected_card.x, selected_card.y, x, y) == 0) {
-                card_selected = false;
-            }
-        } else if (selected_card.where == BOX) {
-            y = cards.getNumCardsAtCol(x);
-            if (cards.moveCardFromBox(selected_card.x, x, y) == 0) {
-                card_selected = false;
-            }
+        selected_card.x = x;
+        if ((selected_card.y = cards.getNumCardsAtCol(x) - 1) >= 0) {
+            selected_card.where = FIELD;
+            card_selected = true;
         }
     }
-    enterFullScreen();
 
     //clicked on a cell
     if (y == -1 && x < *(parent_class->opt.num_freecells) && x >= 0) {
-        if (!card_selected) {
-            selected_card.x = x;
-            selected_card.y = y;
-            selected_card.where = BOX;
-            if (cards.getBoxCard(x) != NO_CARD)
-                card_selected = true;
-        } else {
-            if (selected_card.x == x && selected_card.where == BOX)
-                card_selected = false;
-            else if (selected_card.where == FIELD) {
-                if (cards.moveCard(selected_card.x, selected_card.y, x) == 0) {
-                    card_selected = false;
-                }
-            }
-        }
+        selected_card.x = x;
+        selected_card.y = y;
+        selected_card.where = BOX;
+        if (cards.getBoxCard(x) != NO_CARD)
+            card_selected = true;
     }
 
-    if (y == -1 && x > 3) {
-        if (card_selected) {
-            if (selected_card.where == BOX)
-                if (cards.moveCard(selected_card.x, x) == 0) {
-                    card_selected = false;
-                    rest--;
-                }
-
-            if (selected_card.where == FIELD)
-                if (cards.moveCard(selected_card.x, selected_card.y, x) == 0) {
-                    card_selected = false;
-                    rest--;
-                }
-        }
-    }
-
-    if (rest > 0 && !card_selected)
-        checkAutoMoves();
-
-    if (rest == 0) {
-        game_active = false;
-        parent_class->slotProtocolStop();
-        parent_class->won();
-    }
-
-    if (checkTurns() == 0) {
-        game_active = false;
-        parent_class->slotProtocolStop();
-        parent_class->lost();
-    }
     update();
 }
 
@@ -207,10 +154,54 @@ void FreecellView::mouseReleaseEvent(QMouseEvent * e)
     int mx = e->x(), my = e->y();
     int y, x;
 
+    // get card coordiates
     getCardPosition(mx, my, &x, &y);
-    if (selected_card.x != x || selected_card.y != y) {
-        mousePressEvent(e);
+
+    if (y > -1 && x > -1) {
+        if (selected_card.where == FIELD) {
+            y = cards.getNumCardsAtCol(x);
+            cards.moveCard(selected_card.x, selected_card.y, x, y);
+        } else if (selected_card.where == BOX) {
+            y = cards.getNumCardsAtCol(x);
+            cards.moveCardFromBox(selected_card.x, x, y);
+        }
     }
+
+    //clicked on a cell
+    if (y == -1 && x < *(parent_class->opt.num_freecells) && x >= 0) {
+        if (selected_card.where == FIELD) {
+            cards.moveCard(selected_card.x, selected_card.y, x);
+        }
+    }
+
+    if (y == -1 && x > 3) {
+        if (selected_card.where == BOX) {
+            if (cards.moveCard(selected_card.x, x) == 0) {
+                rest--;
+            }
+        }
+        if (selected_card.where == FIELD) {
+            if (cards.moveCard(selected_card.x, selected_card.y, x) == 0) {
+                rest--;
+            }
+        }
+    }
+
+    if (rest > 0 && !card_selected)
+        checkAutoMoves();
+
+    if (rest == 0) {
+        game_active = false;
+        parent_class->slotProtocolStop();
+        parent_class->won();
+    }
+
+    if (checkTurns() == 0) {
+        game_active = false;
+        parent_class->slotProtocolStop();
+        parent_class->lost();
+    }
+
     card_selected = false;
     update();
 }
@@ -258,13 +249,11 @@ void FreecellView::paintEvent(QPaintEvent * event)
                      event->rect().width(), event->rect().height());
 
     // clear cells
-
     for (i = 0; i < 8; i++)
         if (i < *(parent_class->opt.num_freecells) || i > 3)
             p.drawPixmap(LEFT + CARD_SPACE * i + (i / 4) * 70, 40, empty);
 
     // draw columns
-
     for (i = 0; i < 8; i++) {
         for (j = 0; j < 15; j++) {
             if (cards.getCard(i, j) == NO_CARD)
@@ -286,7 +275,7 @@ void FreecellView::paintEvent(QPaintEvent * event)
             if (cards.getBoxCard(i) != NO_CARD) {
                 if (LEFT + CARD_WIDTH * i + (i / 4) * 70 + 1 + CARD_WIDTH >
                     (event->rect()).left()) {
-                    if(card_selected && i == selected_card.x)
+                    if(card_selected && i == selected_card.x && selected_card.y == -1)
                         continue;
                     p.drawPixmap(LEFT + CARD_SPACE * i + (i / 4) * 70 + 1, 41,
                                  cardpics[cards.getBoxCard(i)], 0, 0,
