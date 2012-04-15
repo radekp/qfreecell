@@ -292,8 +292,16 @@ void FreecellView::paintEvent(QPaintEvent * event)
 
     if (card_selected) {
         if (mouseX >= 0 && mouseY >= 0) {
-            QPixmap pm =
-                cardpics[cards.getCard(selected_card.x, selected_card.y)];
+            int card;
+
+            if(selected_card.y == -1) {
+                card = cards.getBoxCard(selected_card.x);
+            }
+            else {
+                card = cards.getCard(selected_card.x, selected_card.y);
+            }
+
+            QPixmap pm = cardpics[card];
             p.drawPixmap(mouseX - CARD_WIDTH / 2, mouseY - CARD_HEIGHT / 2, pm);
         }
     }
