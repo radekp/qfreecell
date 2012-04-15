@@ -33,39 +33,12 @@ FreecellView::FreecellView(QWidget * parent, FreecellDoc * doc)
     , mouseX(-1)
     , mouseY(-1)
 {
-    char buffer[100];
-    int i;
+    setMinimumSize(480, 640);
 
-    setMinimumSize(800, 600);
-    setMaximumSize(800, 600);
     parent_class = (Freecell *) parent;
     game_active = false;
 
-  /** connect doc with the view*/
     connect(doc, SIGNAL(documentChanged()), this, SLOT(slotDocumentChanged()));
-
-    // load background
-
-    //setBackgroundColor(QColor(0,0,0));
-
-    if (*(parent_class->opt.background_enabled))
-        if (background_picture.load(parent_class->opt.background_file))
-            *(parent_class->opt.background_enabled) = true;
-        else
-            *(parent_class->opt.background_enabled) = false;
-
-    if (!*(parent_class->opt.background_enabled))
-//    setBackgroundColor(*(parent_class->opt.background_color));
-
-        // load cells
-
-        empty.load(parent_class->opt.empty_file);
-
-    // load cards
-
-    for (i = 1; i <= 52; i++) {
-        cardpics[i - 1] = QPixmap(QString(":pictures/cards/%1.bmp").arg(i));
-    }
 
     cards.clear();
     card_selected = false;
@@ -79,9 +52,6 @@ FreecellView::~FreecellView()
 
 void FreecellView::renderCards()
 {
-    QPixmap pix = QPixmap(cardWidth, cardHeight);
-    QPainter p(&pix);
-
     cardWidth = width() / 10;
     cardHeight = height() / 10;
 
@@ -90,9 +60,45 @@ void FreecellView::renderCards()
 
     cardLeft = 4;
 
-    svg.render(&p, "BACK_RED1", QRectF(0, 0, cardWidth, cardHeight));
+    for(int i = 0;; i++) {
+        QPixmap pix = QPixmap(cardWidth, cardHeight);
+        QPainter p(&pix);
 
-    empty = pix;
+        QString elemName;
+        if(i < 52) {
+            int number = (51 - i) / 4 + 2;
+            switch(number)
+            {
+            case 11: elemName = "J"; break;
+            case 12: elemName = "Q"; break;
+            case 13: elemName = "K"; break;
+            case 14: elemName = "A"; break;
+            default: elemName = QString::number(number); break;
+            }
+            switch(i % 4)   // color
+            {
+            case 0: elemName += "C"; break;
+            case 1: elemName += "S"; break;
+            case 2: elemName += "H"; break;
+            default: elemName += "D"; break;
+            }
+        }
+        else
+        {
+            elemName = "BACK_RED1";
+        }
+
+        svg.render(&p, elemName, QRectF(0, 0, cardWidth, cardHeight));
+
+        if(i < 52) {
+             cardpics[i] = pix;
+        }
+        else
+        {
+            empty = pix;
+            break;
+        }
+    }
 }
 
 void FreecellView::resizeEvent(QResizeEvent *event)
