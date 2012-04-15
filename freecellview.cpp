@@ -29,7 +29,7 @@
 
 FreecellView::FreecellView(QWidget * parent, FreecellDoc * doc)
 :  QWidget(parent)
-    , svg(QString(":/cards.svg"), this)
+    , svg(QString(":/cards2.svg"), this)
     , mouseX(-1)
     , mouseY(-1)
 {
