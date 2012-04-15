@@ -44,34 +44,16 @@ public:
     void mouseReleaseEvent(QMouseEvent *e);
     void paintEvent(QPaintEvent *event);
     void getCardPosition(int mx, int my, int *x, int *y);
-    void mouseDoubleClickEvent(QMouseEvent *e);
     void resizeEvent ( QResizeEvent * event );
     bool event(QEvent *);
     void enterFullScreen();
-
-    /**  */
     int checkTurns();
-    /**  */
-    void drawMovingCard(int sx, int sy, int dx, int dy, QPainter *p);
-    /**  */
-    void moveCard(int x1, int y1, int x2, int y2, QPixmap card);
-    /**  */
-    void selectCard(int x, int y, QPainter *p);
-    /**  */
     void checkAutoMoves();
-
     Cards cards;
-    int   card_selected;
-    /**  */
+    int card_selected;
     int rest;
-    /**  */
     bool game_active;
-    /**  */
     class Freecell* parent_class;
-
-protected slots:
-
-    void slotDocumentChanged();
 
 private:
 

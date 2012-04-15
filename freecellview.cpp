@@ -317,20 +317,6 @@ void FreecellView::paintEvent(QPaintEvent * event)
         p.setPen(QColor(0, 255, 0));
         p.drawText(5, 595, "Protocol enabled");
     }
-//        draw.drawPixmap( event->rect().x(), event->rect().y(),    pixmap,
-//                                                                                event->rect().x(), event->rect().y(),
-//                                                                                event->rect().width(), event->rect().height() );
-}
-
-void FreecellView::slotDocumentChanged()
-{
-    //TODO update the view
-
-}
-
-/**  */
-void FreecellView::mouseDoubleClickEvent(QMouseEvent * e)
-{
 }
 
 /** mx, my = mouse position
@@ -401,151 +387,6 @@ int FreecellView::checkTurns()
     return turns;
 }
 
-/**  */
-void FreecellView::drawMovingCard(int sx, int sy, int dx, int dy, QPainter * p)
-{
-
-    int nx, ny, x, y;
-
-    moves++;
-
-    if (parent_class->protocol_fd != NULL) {
-        char l[] = { "abcdefgh12345678" };
-        char d[] = { 0, 0, 0 };
-
-        if (sy == -1)
-            d[0] = l[sx];
-        else
-            d[0] = l[sx + 8];
-        if (dy == -1)
-            d[1] = l[dx];
-        else
-            d[1] = l[dx + 8];
-        fprintf(parent_class->protocol_fd, "%s ", d);
-        if (moves % 10 == 0)
-            fprintf(parent_class->protocol_fd, "\n");
-    }
-
-    switch (sy) {
-    case -1:                   // move card from cell...
-
-        x = cardLeft + cardWidth * sx + (sx / 4) * 70;
-        y = 41;
-
-        // clear cell       
-        p->drawPixmap(cardLeft + cardWidth * sx + (sx / 4) * 70, 40, empty);
-
-        switch (dy) {
-        case -1:               // ...to cell
-            nx = cardLeft + cardWidth * dx + (dx / 4) * 70 + 1;
-            ny = 41;
-            moveCard(x, y, nx, ny, cardpics[cards.getBoxCard(dx)]);
-            break;
-
-        default:               // ...to column
-            nx = cardLeft + dx * spaceWidth;
-            ny = 160 + dy * 25;
-            moveCard(x, y, nx, ny, cardpics[cards.getCard(dx, dy)]);
-            break;
-        }
-        break;
-
-    default:                   // move card from column...
-
-        x = cardLeft + sx * spaceWidth;
-        y = 160 + sy * 25;
-
-        if (!*(parent_class->opt.background_enabled))
-            p->fillRect(cardLeft + sx * spaceWidth, 160 + sy * 25, cardWidth - 1,
-                        CARD_HEIGHT, QBrush(QColor(0, 128, 0)));
-        else
-            p->drawPixmap(cardLeft + sx * spaceWidth, 160 + sy * 25,
-                          background_picture, cardLeft + sx * spaceWidth,
-                          160 + sy * 25, cardWidth - 1, CARD_HEIGHT);
-        if (sy - 1 >= 0)
-            if (cards.getCard(sx, sy - 1) != NO_CARD)
-                p->drawPixmap(cardLeft + sx * spaceWidth, 160 + (sy - 1) * 25,
-                              cardpics[cards.getCard(sx, sy - 1)], 0, 0,
-                              cardWidth - 1, CARD_HEIGHT);
-
-        switch (dy) {
-        case -1:               // ...to cell
-            nx = cardLeft + cardWidth * dx + (dx / 4) * 70 + 1;
-            ny = 41;
-            moveCard(x, y, nx, ny, cardpics[cards.getBoxCard(dx)]);
-            break;
-
-        default:               // ...to column
-            nx = cardLeft + dx * spaceWidth;
-            ny = 160 + dy * 25;
-            moveCard(x, y, nx, ny, cardpics[cards.getCard(dx, dy)]);
-            break;
-
-        }
-        break;
-    }
-
-}
-
-/**  */
-void FreecellView::moveCard(int x1, int y1, int x2, int y2, QPixmap card)
-{
-
-    QPixmap screen(cardWidth + 1, CARD_HEIGHT + 1);
-
-    int c = cardLeft;               // number of steps
-    int ox = x1 + (x2 - x1) / c, oy = y1 + (y2 - y1) / c;
-    int px, py;
-    int i;
-
-    // save background
-//  bitBlt((QPaintDevice*)&screen, 0, 0, this, ox, oy, cardWidth, CARD_HEIGHT);
-
-    for (i = 1; i <= c; i++) {
-        px = x1 + i * (x2 - x1) / c;
-        py = y1 + i * (y2 - y1) / c;
-
-        // restore background
-//      bitBlt(this, ox, oy, (QPaintDevice*)&screen, 0, 0, cardWidth, CARD_HEIGHT);
-
-        // save background
-//      bitBlt((QPaintDevice*)&screen, 0, 0, this, px, py, cardWidth, CARD_HEIGHT);
-
-        // draw card on screen
-//      bitBlt(this, px, py, (QPaintDevice*)&card, 0, 0, cardWidth-1, CARD_HEIGHT);
-
-        ox = x1 + i * (x2 - x1) / c;
-        oy = y1 + i * (y2 - y1) / c;
-    }
-}
-
-/**  */
-void FreecellView::selectCard(int x, int y, QPainter * p)
-{
-
-    int x1;
-    int y1;
-
-    if (y == -1)                // cell
-    {
-        x1 = cardLeft + cardWidth * x + (x / 4) * 70 + 1;
-        y1 = 41;
-    } else                      // column
-    {
-        x1 = cardLeft + spaceWidth * x;
-        y1 = 160 + y * 25;
-    }
-
-    // draw red rectangle
-
-    if (y != 0 || x < *(parent_class->opt.num_freecells) || x > 3) {
-        p->setPen(QColor(255, 0, 0));
-        p->drawRect(x1, y1, cardWidth - 2, CARD_HEIGHT - 1);
-        p->drawRect(x1 + 1, y1 + 1, cardWidth - 4, CARD_HEIGHT - 3);
-    }
-}
-
-/**  */
 void FreecellView::checkAutoMoves()
 {
 
@@ -632,5 +473,4 @@ void FreecellView::checkAutoMoves()
                     }
 
     } while (moves > 0);
-
 }
