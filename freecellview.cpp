@@ -336,31 +336,12 @@ void FreecellView::getCardPosition(int mx, int my, int *x, int *y)
 {
     *x = *y = -1;
 
-    // clicked on column ?
-    if (((mx > cardLeft && mx < 90) || (mx > 110 && mx < 180) ||
-         (mx > 200 && mx < 270) || (mx > 290 && mx < 360) ||
-         (mx > 380 && mx < 450) || (mx > 470 && mx < 540) ||
-         (mx > 560 && mx < 630) || (mx > 650 && mx < 720)) && my > 160) {
-        *y = (my - 160) / 25;
-        *x = (mx - cardLeft) / spaceWidth;
-    }
-    // clicked on cells 0..3
-    if (((mx > cardLeft && mx < 90) || (mx > 100 && mx < 170)
-         || (mx > 180 && mx < 250) || (mx > 260 && mx < 330)) && (my > 40
-                                                                  && my <
-                                                                  140)) {
-        *x = (mx - cardLeft) / spaceWidth;
+    if(my < cardHeight + spaceHeight)
         *y = -1;
-    }
-    // clicked on cells 4..7
-    if (((mx > 430 && mx < 500) || (mx > 510 && mx < 580)
-         || (mx > 590 && mx < 660) || (mx > 670 && mx < 740)) && (my > 40
-                                                                  && my <
-                                                                  140)) {
-        *x = (mx - 410) / spaceWidth + 4;
-        *y = -1;
-    }
+    else
+        *y = (my - cardHeight - spaceHeight) / spaceHeight;
 
+    *x = mx / spaceWidth;
 }
 
 /**  */
