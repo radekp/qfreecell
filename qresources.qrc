@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>cards.svg</file>
         <file>cards2.svg</file>
     </qresource>
 </RCC>
