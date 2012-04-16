@@ -55,8 +55,14 @@ void FreecellView::renderCards()
     cardLeft = 4;
     cardTop = 4;
 
-    cardWidth = (width() - 2 * cardLeft)  / 8;
-    cardHeight = height() / 8;
+    int newWidth = (width() - 2 * cardLeft)  / 8;
+    int newHeight = height() / 8;
+
+    if(cardWidth == newWidth && cardHeight == newHeight)
+        return;
+
+    cardWidth = newWidth;
+    cardHeight = newHeight;
 
     for(int i = 0;; i++) {
         QPixmap pix = QPixmap(cardWidth, cardHeight);
