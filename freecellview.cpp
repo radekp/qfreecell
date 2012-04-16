@@ -274,7 +274,7 @@ void FreecellView::paintEvent(QPaintEvent * event)
             if (card_selected && selected_card.x == i && selected_card.y == j)
                 continue;
 
-            p.drawPixmap(cardLeft + i * cardWidth, cardTop + cardHeight + (j * cardHeight) / 5,
+            p.drawPixmap(cardLeft + i * cardWidth, cardTop + cardHeight + (j * cardHeight) / 3,
                          cardpics[cards.getCard(i, j)], 0, 0,
                          cardWidth - 1, CARD_HEIGHT);
         }
