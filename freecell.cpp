@@ -23,9 +23,6 @@
 #include "freecellview.h"
 #include "cselectgamedlg.h"
 #include "cstatistics.h"
-#include "ccongratulation.h"
-#include "lostdlg.h"
-#include "closewarning.h"
 #include "coptions.h"
 
 #include <stdlib.h>
@@ -422,26 +419,22 @@ void Freecell::statusCallback(int id_)
 /**  */
 void Freecell::won()
 {
-  CCongratulation c(this);
-
-  c.exec();
-		
-  pstatistics->addWon();
-  pstatistics->show();
+    QMessageBox::information(this, tr("Congratulation"), tr("You have won this game!"));
+    pstatistics->addWon();
+    pstatistics->show();
 }
 
 /**  */
 void Freecell::lost()
 {
-  LostDlg *l = new LostDlg(0, " ", false);
-  l->show();
+    QMessageBox::information(this, tr("Ups"), tr("You have lost this game."));
 }
 
 /**  */
 bool Freecell::newGameWarning()
 {
-	CLoseWarning l(this);
-	return l.exec();
+    return QMessageBox::question(this, tr("Freecell"), tr("Really close the game?"),
+                                 QMessageBox::Yes, QMessageBox::No) == QMessageBox::Yes;
 }
 
 /**  */
