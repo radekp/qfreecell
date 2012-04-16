@@ -320,7 +320,12 @@ void Freecell::slotFileSelect()
 
 void Freecell::slotFileStatistic()
 {
-	if(pstatistics==NULL) pstatistics = new CStatistics(this, "", false);
+    if(pstatistics==NULL)
+        pstatistics = new CStatistics(this, "", false);
+
+#ifdef QTOPIA
+    pstatistics->setGeometry(x(), y(), width(), height());
+#endif
 	pstatistics->show();
 }
 
