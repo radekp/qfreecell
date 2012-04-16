@@ -52,8 +52,8 @@ FreecellView::~FreecellView()
 
 void FreecellView::renderCards()
 {
-    cardWidth = width() / 10;
-    cardHeight = height() / 10;
+    cardWidth = width() / 9;
+    cardHeight = height() / 9;
 
     spaceWidth = width() / 8;
     spaceHeight = height() / 8;

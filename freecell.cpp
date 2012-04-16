@@ -47,10 +47,10 @@ Freecell::Freecell(QWidget *parent, Qt::WFlags flags)
     : QMainWindow(parent, flags)
 {
 #ifdef QTOPIA
-    QtopiaServiceRequest svreq("RotationManager", "setCurrentRotation(int)");
-    svreq << 90;
-    svreq.send();
-    showFullScreen();
+//    QtopiaServiceRequest svreq("RotationManager", "setCurrentRotation(int)");
+//    svreq << 90;
+//    svreq.send();
+//    showFullScreen();
 #endif
 
 	FILE *f;
