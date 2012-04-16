@@ -45,6 +45,7 @@
 
 Freecell::Freecell(QWidget *parent, Qt::WFlags flags)
     : QMainWindow(parent, flags)
+    , rotation(90)
 {
 	FILE *f;
 
@@ -134,6 +135,9 @@ Freecell::Freecell(QWidget *parent, Qt::WFlags flags)
 
 Freecell::~Freecell()
 {
+    if(rotation == 0) {
+        slotFileRotate();       // rotate to 0 when ending
+    }
 }
 
 void Freecell::initMenuBar()
@@ -460,7 +464,6 @@ void Freecell::slotFileOptions()
 
 void Freecell::slotFileRotate()
 {
-    static int rotation = 90;
 #ifdef QTOPIA
     QtopiaServiceRequest svreq("RotationManager", "setCurrentRotation(int)");
     svreq << rotation;

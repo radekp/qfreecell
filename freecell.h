@@ -167,7 +167,9 @@ public: // Public attributes
   /**  */
   char directory[200];
   /**  */
-  char game_directory[200];;
+  char game_directory[200];
+
+  int rotation;     // degreess for next rotate
 };
 #endif 
 
