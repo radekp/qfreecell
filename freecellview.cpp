@@ -157,14 +157,18 @@ void FreecellView::mousePressEvent(QMouseEvent * e)
             card_selected = true;
     }
 
-    update();
+    update(mouseX - cardWidth, 0, cardWidth * 2, height());
 }
 
 void FreecellView::mouseMoveEvent(QMouseEvent * e)
 {
+    int oldX = mouseX;
+    int oldY = mouseY;
     mouseX = e->x();
     mouseY = e->y();
-    update();
+
+    update(oldX - cardWidth / 2, oldY- cardHeight / 2, cardWidth, cardHeight);
+    update(mouseX - cardWidth / 2, mouseY- cardHeight / 2, cardWidth, cardHeight);
 }
 
 void FreecellView::mouseReleaseEvent(QMouseEvent * e)
@@ -314,7 +318,7 @@ void FreecellView::paintEvent(QPaintEvent * event)
             }
 
             QPixmap pm = cardpics[card];
-            p.drawPixmap(mouseX - cardWidth / 2, mouseY - CARD_HEIGHT / 2, pm);
+            p.drawPixmap(mouseX - cardWidth / 2, mouseY - cardHeight / 2, pm);
         }
     }
 
