@@ -17,36 +17,40 @@
 #include "cselectgamedlg.h"
 #include <stdlib.h>
 
-CSelectGameDlg::CSelectGameDlg(QWidget *parent, const char *name) : QDialog(parent){
-	move(POS_X, POS_Y);
-	initDialog();
-	connect(QPushButton_1, SIGNAL(clicked()), this, SLOT(buttonPressed()));
-	connect(QPushButton_ABORT, SIGNAL(clicked()), this, SLOT(abort()));
+CSelectGameDlg::CSelectGameDlg(QWidget * parent,
+                               const char *name):QDialog(parent)
+{
+    move(POS_X, POS_Y);
+    initDialog();
+    connect(QPushButton_1, SIGNAL(clicked()), this, SLOT(buttonPressed()));
+    connect(QPushButton_ABORT, SIGNAL(clicked()), this, SLOT(abort()));
 }
 
-CSelectGameDlg::~CSelectGameDlg(){
+CSelectGameDlg::~CSelectGameDlg()
+{
 }
 
 /**  */
 int CSelectGameDlg::getGamenumber()
 {
-return gamenumber;
+    return gamenumber;
 }
 
 /**  */
 void CSelectGameDlg::buttonPressed()
 {
-        gamenumber = QSpinBox_1->value();
-	accept();
+    gamenumber = QSpinBox_1->value();
+    accept();
 }
 
 /**  */
 void CSelectGameDlg::setGamenumber(int game)
 {
-	gamenumber = game;
+    gamenumber = game;
 }
 
 /**  */
-void CSelectGameDlg::abort(){
-	reject();
+void CSelectGameDlg::abort()
+{
+    reject();
 }

@@ -18,41 +18,41 @@
 #ifndef CARDS_H
 #define CARDS_H
 
-
 /**
   *@author Daniel Etzold
   */
 
-class Cards {
-public: 
-	Cards();
-	~Cards();
+class Cards
+{
+public:
+    Cards();
+    ~Cards();
 
-  int getNumCardsAtCol(int x);
-  void clear();
-  void init(int);
-  int getCard(int x, int y);
-  int getBoxCard(int x);
-  int moveCard(int sx, int sy, int dx, int dy);
-  int moveCard(int sx, int sy, int box);
-  int moveCard(int bleft, int bright);
-  int moveCardFromBox(int b, int dx, int dy);
-  int getCardColor(int x, int y);
-  int getCardColor(int b);
+    int getNumCardsAtCol(int x);
+    void clear();
+    void init(int);
+    int getCard(int x, int y);
+    int getBoxCard(int x);
+    int moveCard(int sx, int sy, int dx, int dy);
+    int moveCard(int sx, int sy, int box);
+    int moveCard(int bleft, int bright);
+    int moveCardFromBox(int b, int dx, int dy);
+    int getCardColor(int x, int y);
+    int getCardColor(int b);
   /**  */
-  bool checkMove(int sx, int sy, int dx, int dy);
+    bool checkMove(int sx, int sy, int dx, int dy);
   /**  */
-  bool checkMoveFromBox(int b, int x, int y);
+    bool checkMoveFromBox(int b, int x, int y);
   /**  */
-  bool checkMoveToBox(int sx, int sy, int b);
+    bool checkMoveToBox(int sx, int sy, int b);
   /**  */
-  bool checkMove(int bleft, int bright);
+    bool checkMove(int bleft, int bright);
   /**  */
-  int getNumFreecells(int num_maxfreecells);
+    int getNumFreecells(int num_maxfreecells);
 
 private:
-  int        box[8];
-  int        cardarray[8][15];
+    int box[8];
+    int cardarray[8][15];
 };
 
 #endif

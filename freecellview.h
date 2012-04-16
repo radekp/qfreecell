@@ -36,15 +36,15 @@ class FreecellView : public QWidget
     Q_OBJECT
 public:
 
-    FreecellView(QWidget *parent=0, FreecellDoc* doc=0);
+    FreecellView(QWidget * parent = 0, FreecellDoc * doc = 0);
     ~FreecellView();
 
-    void mousePressEvent(QMouseEvent *e);
-    void mouseMoveEvent(QMouseEvent *e);
-    void mouseReleaseEvent(QMouseEvent *e);
-    void paintEvent(QPaintEvent *event);
+    void mousePressEvent(QMouseEvent * e);
+    void mouseMoveEvent(QMouseEvent * e);
+    void mouseReleaseEvent(QMouseEvent * e);
+    void paintEvent(QPaintEvent * event);
     void getCardPosition(int mx, int my, int *x, int *y);
-    void resizeEvent ( QResizeEvent * event );
+    void resizeEvent(QResizeEvent * event);
     bool event(QEvent *);
     void enterFullScreen();
     int checkTurns();
@@ -53,11 +53,11 @@ public:
     int card_selected;
     int rest;
     bool game_active;
-    class Freecell* parent_class;
+    class Freecell *parent_class;
 
 private:
 
-    QSvgRenderer svg;
+     QSvgRenderer svg;
     QPixmap cardpics[54];
     int cardWidth, cardHeight;
     int cardLeft, cardTop;
@@ -65,11 +65,14 @@ private:
     void drawCard(QPainter & p, QPaintEvent * e, int x, int y, int card);
 
 public:
-    QPixmap empty1, empty2;
+     QPixmap empty1, empty2;
     int moves;
 
     /** holds information about the selected cards */
-    struct { int x, y, where; } selected_card;
+    struct
+    {
+        int x, y, where;
+    } selected_card;
 
     int mouseX, mouseY;
 

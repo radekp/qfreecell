@@ -55,45 +55,58 @@ void FreecellView::renderCards()
     cardLeft = 4;
     cardTop = 4;
 
-    int newWidth = (width() - 2 * cardLeft)  / 8;
+    int newWidth = (width() - 2 * cardLeft) / 8;
     int newHeight = height() / 8;
 
-    if(cardWidth == newWidth && cardHeight == newHeight)
+    if (cardWidth == newWidth && cardHeight == newHeight)
         return;
 
     cardWidth = newWidth;
     cardHeight = newHeight;
 
-    for(int i = 0; i < 54; i++) {
+    for (int i = 0; i < 54; i++) {
         QPixmap pix = QPixmap(cardWidth, cardHeight);
         pix.fill(Qt::transparent);
         QPainter p(&pix);
 
         QString elemName;
-        if(i < 52) {
+        if (i < 52) {
             int number = (51 - i) / 4 + 2;
-            switch(number)
-            {
-            case 11: elemName = "J"; break;
-            case 12: elemName = "Q"; break;
-            case 13: elemName = "K"; break;
-            case 14: elemName = "A"; break;
-            default: elemName = QString::number(number); break;
+            switch (number) {
+            case 11:
+                elemName = "J";
+                break;
+            case 12:
+                elemName = "Q";
+                break;
+            case 13:
+                elemName = "K";
+                break;
+            case 14:
+                elemName = "A";
+                break;
+            default:
+                elemName = QString::number(number);
+                break;
             }
-            switch(i % 4)   // color
+            switch (i % 4)      // color
             {
-            case 0: elemName += "C"; break;
-            case 1: elemName += "S"; break;
-            case 2: elemName += "H"; break;
-            default: elemName += "D"; break;
+            case 0:
+                elemName += "C";
+                break;
+            case 1:
+                elemName += "S";
+                break;
+            case 2:
+                elemName += "H";
+                break;
+            default:
+                elemName += "D";
+                break;
             }
-        }
-        else if(i == 52)
-        {
+        } else if (i == 52) {
             elemName = "EMPTY1";
-        }
-        else
-        {
+        } else {
             elemName = "EMPTY2";
         }
 
@@ -102,7 +115,7 @@ void FreecellView::renderCards()
     }
 }
 
-void FreecellView::resizeEvent(QResizeEvent *event)
+void FreecellView::resizeEvent(QResizeEvent * event)
 {
     renderCards();
 }
@@ -136,7 +149,6 @@ void FreecellView::mousePressEvent(QMouseEvent * e)
             card_selected = true;
         }
     }
-
     //clicked on a cell
     if (y == -1 && x < *(parent_class->opt.num_freecells) && x >= 0) {
         selected_card.x = x;
@@ -156,8 +168,9 @@ void FreecellView::mouseMoveEvent(QMouseEvent * e)
     mouseX = e->x();
     mouseY = e->y();
 
-    update(oldX - cardWidth / 2, oldY- cardHeight / 2, cardWidth, cardHeight);
-    update(mouseX - cardWidth / 2, mouseY- cardHeight / 2, cardWidth, cardHeight);
+    update(oldX - cardWidth / 2, oldY - cardHeight / 2, cardWidth, cardHeight);
+    update(mouseX - cardWidth / 2, mouseY - cardHeight / 2, cardWidth,
+           cardHeight);
 }
 
 void FreecellView::mouseReleaseEvent(QMouseEvent * e)
@@ -183,7 +196,6 @@ void FreecellView::mouseReleaseEvent(QMouseEvent * e)
             cards.moveCardFromBox(selected_card.x, x, y);
         }
     }
-
     //clicked on a cell
     if (y == -1 && x < *(parent_class->opt.num_freecells) && x >= 0) {
         if (selected_card.where == FIELD) {
@@ -223,15 +235,12 @@ void FreecellView::mouseReleaseEvent(QMouseEvent * e)
     update();
 }
 
-bool FreecellView::event(QEvent *event)
+bool FreecellView::event(QEvent * event)
 {
 #ifdef QTOPIA
-    if(event->type() == QEvent::WindowDeactivate)
-    {
+    if (event->type() == QEvent::WindowDeactivate) {
         lower();
-    }
-    else if(event->type() == QEvent::WindowActivate)
-    {
+    } else if (event->type() == QEvent::WindowActivate) {
         QString title = windowTitle();
         setWindowTitle(QLatin1String("_allow_on_top_"));
         raise();
@@ -251,10 +260,11 @@ void FreecellView::enterFullScreen()
 #endif
 }
 
-void FreecellView::drawCard(QPainter & p, QPaintEvent * e, int x, int y, int card)
+void FreecellView::drawCard(QPainter & p, QPaintEvent * e, int x, int y,
+                            int card)
 {
     QRect cardRect(x, y, cardWidth, cardHeight);
-    if(cardRect.intersect(e->rect()).isEmpty())
+    if (cardRect.intersect(e->rect()).isEmpty())
         return;
     p.drawPixmap(x, y, cardpics[card]);
 }
@@ -278,7 +288,9 @@ void FreecellView::paintEvent(QPaintEvent * e)
                 continue;
             if (card_selected && selected_card.x == i && selected_card.y == j)
                 continue;
-            drawCard(p, e, cardLeft + i * cardWidth, cardTop + cardHeight + (j * cardHeight) / 3, cards.getCard(i, j));
+            drawCard(p, e, cardLeft + i * cardWidth,
+                     cardTop + cardHeight + (j * cardHeight) / 3,
+                     cards.getCard(i, j));
         }
     }
 
@@ -287,9 +299,10 @@ void FreecellView::paintEvent(QPaintEvent * e)
         if (i < *(parent_class->opt.num_freecells) || i > 3) {
             if (cards.getBoxCard(i) == NO_CARD)
                 continue;
-            if(card_selected && i == selected_card.x && selected_card.y == -1)
+            if (card_selected && i == selected_card.x && selected_card.y == -1)
                 continue;
-            drawCard(p, e, cardLeft + cardWidth * i, cardTop, cards.getBoxCard(i));
+            drawCard(p, e, cardLeft + cardWidth * i, cardTop,
+                     cards.getBoxCard(i));
         }
     }
 
@@ -297,14 +310,14 @@ void FreecellView::paintEvent(QPaintEvent * e)
         if (mouseX >= 0 && mouseY >= 0) {
             int card;
 
-            if(selected_card.y == -1) {
+            if (selected_card.y == -1) {
                 card = cards.getBoxCard(selected_card.x);
-            }
-            else {
+            } else {
                 card = cards.getCard(selected_card.x, selected_card.y);
             }
 
-            drawCard(p, e, mouseX - cardWidth / 2, mouseY - cardHeight / 2, card);
+            drawCard(p, e, mouseX - cardWidth / 2, mouseY - cardHeight / 2,
+                     card);
         }
     }
 }
@@ -318,7 +331,7 @@ void FreecellView::getCardPosition(int mx, int my, int *x, int *y)
 {
     *x = *y = -1;
 
-    if(my < cardTop + cardHeight)
+    if (my < cardTop + cardHeight)
         *y = -1;
     else
         *y = (my - cardHeight - cardTop) / cardHeight;
@@ -469,4 +482,3 @@ void FreecellView::slotDocumentChanged()
 {
     update();
 }
-

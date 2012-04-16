@@ -33,35 +33,36 @@
   *@author Daniel Etzold
   */
 
-class CSelectGameDlg : public QDialog  {
-   Q_OBJECT
-public: 
-	CSelectGameDlg(QWidget *parent=0, const char *name=0);
-	~CSelectGameDlg();
+class CSelectGameDlg : public QDialog
+{
+    Q_OBJECT
+public:
+    CSelectGameDlg(QWidget * parent = 0, const char *name = 0);
+    ~CSelectGameDlg();
 
   /**  */
-  int getGamenumber();
+    int getGamenumber();
   /**  */
-  void setGamenumber(int game);
+    void setGamenumber(int game);
 
-public slots: // Public slots
+public slots:                  // Public slots
   /**  */
   /**  */
-  void abort();
-  void buttonPressed();
-protected: 
-	void initDialog();
-public: // Public attributes
+    void abort();
+    void buttonPressed();
+protected:
+    void initDialog();
+public:                        // Public attributes
   /**  */
-  int gamenumber;
-	//Generated area. DO NOT EDIT!!!(begin)
-	QPushButton *QPushButton_1;
-	QLabel *QLabel_1;
-	QSpinBox *QSpinBox_1;
-	QPushButton *QPushButton_ABORT;
-	//Generated area. DO NOT EDIT!!!(end)
+    int gamenumber;
+    //Generated area. DO NOT EDIT!!!(begin)
+    QPushButton *QPushButton_1;
+    QLabel *QLabel_1;
+    QSpinBox *QSpinBox_1;
+    QPushButton *QPushButton_ABORT;
+    //Generated area. DO NOT EDIT!!!(end)
 
-private: 
+private:
 };
 
 #endif

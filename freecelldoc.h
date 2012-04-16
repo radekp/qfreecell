@@ -28,22 +28,20 @@
 
 class FreecellDoc : public QObject
 {
-  Q_OBJECT
-
-  public:
+    Q_OBJECT
+public:
     FreecellDoc();
     ~FreecellDoc();
     void newDoc();
     bool save();
-    bool saveAs(const QString &filename);
-    bool load(const QString &filename);
+    bool saveAs(const QString & filename);
+    bool load(const QString & filename);
     bool isModified() const;
 
-  signals:
-    void documentChanged();
+     signals: void documentChanged();
 
-  protected:
-    bool modified;
+protected:
+     bool modified;
 };
 
 #endif

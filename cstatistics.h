@@ -32,51 +32,53 @@
   *@author Daniel Etzold
   */
 
-class CStatistics : public QDialog  {
-   Q_OBJECT
-public: 
-	CStatistics(QWidget *parent=0, const char *name=0, bool modal=true);
-	~CStatistics();
+class CStatistics : public QDialog
+{
+    Q_OBJECT
+public:
+    CStatistics(QWidget * parent = 0, const char *name = 0, bool modal = true);
+    ~CStatistics();
 
-  struct stat {
-    	int won_all;
-    	int lost_all;
-    	int won_session;
-    	int lost_session;
+    struct stat
+    {
+        int won_all;
+        int lost_all;
+        int won_session;
+        int lost_session;
     } statistics;
 
   /**  */
-  void addWon();
-	void addLost();
+    void addWon();
+    void addLost();
   /**  */
-  void updateStatistics();
+    void updateStatistics();
 
-protected: 
-	void initDialog();
-	//Generated area. DO NOT EDIT!!!(begin)
-	QGroupBox *QGroupBox_1;
-	QLabel *QLabel_1;
-	QLabel *QLabel_2;
-	QPushButton *QPushButton_OK;
-	QPushButton *QPushButton_RESET;
-	QLabel *QLabel_3;
-	QLabel *QLabel_4;
-	QLabel *QLabel_5;
-	QLabel *QLabel_WonAll;
-	QLabel *QLabel_LostAll;
-	QLabel *QLabel_WonSession;
-	QLabel *QLabel_LostSession;
-	QLabel *QLabel_WonAllPercent;
-	QLabel *QLabel_WonSessionPercent;
-	//Generated area. DO NOT EDIT!!!(end)
+protected:
+    void initDialog();
+    //Generated area. DO NOT EDIT!!!(begin)
+    QGroupBox *QGroupBox_1;
+    QLabel *QLabel_1;
+    QLabel *QLabel_2;
+    QPushButton *QPushButton_OK;
+    QPushButton *QPushButton_RESET;
+    QLabel *QLabel_3;
+    QLabel *QLabel_4;
+    QLabel *QLabel_5;
+    QLabel *QLabel_WonAll;
+    QLabel *QLabel_LostAll;
+    QLabel *QLabel_WonSession;
+    QLabel *QLabel_LostSession;
+    QLabel *QLabel_WonAllPercent;
+    QLabel *QLabel_WonSessionPercent;
+    //Generated area. DO NOT EDIT!!!(end)
 
-private: 
-public slots: // Public slots
+private:
+public slots:                  // Public slots
   /**  */
-  void reset();
-public: // Public attributes
+    void reset();
+public:                        // Public attributes
   /**  */
-  class Freecell* parent_class;
+     class Freecell * parent_class;
 };
 
 #endif

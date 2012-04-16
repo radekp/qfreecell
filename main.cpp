@@ -20,9 +20,8 @@
 #include <qtopiaapplication.h>
 #include "freecell.h"
 
-QTOPIA_ADD_APPLICATION(QTOPIA_TARGET,Freecell)
+QTOPIA_ADD_APPLICATION(QTOPIA_TARGET, Freecell)
 QTOPIA_MAIN
-
 #else
 
 #include <QtGui/QApplication>

@@ -41,110 +41,114 @@
 #include <QtopiaServiceRequest>
 #endif
 
-Freecell::Freecell(QWidget *parent, Qt::WFlags flags)
-    : QMainWindow(parent, flags)
+Freecell::Freecell(QWidget * parent, Qt::WFlags flags)
+:  QMainWindow(parent, flags)
     , rotation(90)
 {
-	FILE *f;
+    FILE *f;
 
-	// create ~/.qfreecell	
-        QDir d("/tmp");
-	char buffer[200];
-	
-	// save location of binary
-	d.cdUp();
-        strcpy(game_directory, (d.path()).toLatin1().data());
-	
-        strcpy(directory, QDir::homePath().toLatin1().data());
-        strcat(directory, "/.qfreecell");
-	
-	d.setPath(directory);
-	if(!d.exists()) // create directories if not exists
-	{
-		printf("Creating ~/.qfreecell...\n");
-		d.mkdir(directory);
-		sprintf(buffer, "%s/protocols", directory);
+    // create ~/.qfreecell  
+    QDir d("/tmp");
+    char buffer[200];
+
+    // save location of binary
+    d.cdUp();
+    strcpy(game_directory, (d.path()).toLatin1().data());
+
+    strcpy(directory, QDir::homePath().toLatin1().data());
+    strcat(directory, "/.qfreecell");
+
+    d.setPath(directory);
+    if (!d.exists())            // create directories if not exists
+    {
+        printf("Creating ~/.qfreecell...\n");
+        d.mkdir(directory);
+        sprintf(buffer, "%s/protocols", directory);
     }
-	
-	//Init statistics
+    //Init statistics
 
-	pstatistics = new CStatistics(this, "", false);
-	protocol_file = new QString();
-	protocol_fd = NULL;
-	
-	// first set configuration to default	
-	opt.empty_file = new char[200];
-	opt.background_file = new char[200];
-	opt.background_enabled = new bool;
-	opt.background_color = new QColor(0, 128, 0);
-	opt.num_freecells = new int;
-	opt.spinbox_freecells_min = new int;
-	
-	// set picture filename of freecells
-	strcpy(opt.empty_file, directory);
-	strcat(opt.empty_file, "/freecells/");
-	strcat(opt.empty_file, DEFAULT_FREECELL);
-	
-	// set background filename
-	strcpy(opt.background_file, directory);
-	strcat(opt.background_file, "/backgrounds/");
-	strcat(opt.background_file, DEFAULT_BACKGROUND);
-	
-	// enable backgrounds
-	*opt.background_enabled = true;
+    pstatistics = new CStatistics(this, "", false);
+    protocol_file = new QString();
+    protocol_fd = NULL;
 
-	// set number of free cells to 4
-	*opt.num_freecells = 4;
-	
-	//////////////////////////////
-	// now read configuration file
+    // first set configuration to default   
+    opt.empty_file = new char[200];
+    opt.background_file = new char[200];
+    opt.background_enabled = new bool;
+    opt.background_color = new QColor(0, 128, 0);
+    opt.num_freecells = new int;
+    opt.spinbox_freecells_min = new int;
 
-	sprintf(buffer, "%s/configuration",directory);
-	f = fopen(buffer, "r");
-	if(f!=NULL)
-	{
-		unsigned int i;
-		while(fgets(buffer, 200, f)!=NULL)
-		{
-			i=0;
-			while(buffer[i++]!='\0') if(buffer[i-1]=='\n') buffer[i-1]='\0';
-			for(i=0;i<strlen(buffer);i++)	if(buffer[i]=='=') break;
-			
-			if(memcmp(buffer,"background picture",18)==0) strcpy(opt.background_file, buffer+i+1);
-			if(memcmp(buffer,"freecell",8)==0) strcpy(opt.empty_file, buffer+i+1);
-			if(memcmp(buffer,"background enabled",18)==0)
-				if(buffer[i+1]=='1') *opt.background_enabled = true;
-					else *opt.background_enabled = false;
-		}
-		fclose(f);
-	}
-	
-  ///////////////////////////////////////////////////////////////////
-  // call inits to invoke all other construction parts
-  initMenuBar();
-  initToolBar();
-  initStatusBar();
+    // set picture filename of freecells
+    strcpy(opt.empty_file, directory);
+    strcat(opt.empty_file, "/freecells/");
+    strcat(opt.empty_file, DEFAULT_FREECELL);
 
-  initDoc();
-  initView();
+    // set background filename
+    strcpy(opt.background_file, directory);
+    strcat(opt.background_file, "/backgrounds/");
+    strcat(opt.background_file, DEFAULT_BACKGROUND);
 
-  slotFileNew();
+    // enable backgrounds
+    *opt.background_enabled = true;
+
+    // set number of free cells to 4
+    *opt.num_freecells = 4;
+
+    //////////////////////////////
+    // now read configuration file
+
+    sprintf(buffer, "%s/configuration", directory);
+    f = fopen(buffer, "r");
+    if (f != NULL) {
+        unsigned int i;
+        while (fgets(buffer, 200, f) != NULL) {
+            i = 0;
+            while (buffer[i++] != '\0')
+                if (buffer[i - 1] == '\n')
+                    buffer[i - 1] = '\0';
+            for (i = 0; i < strlen(buffer); i++)
+                if (buffer[i] == '=')
+                    break;
+
+            if (memcmp(buffer, "background picture", 18) == 0)
+                strcpy(opt.background_file, buffer + i + 1);
+            if (memcmp(buffer, "freecell", 8) == 0)
+                strcpy(opt.empty_file, buffer + i + 1);
+            if (memcmp(buffer, "background enabled", 18) == 0)
+                if (buffer[i + 1] == '1')
+                    *opt.background_enabled = true;
+                else
+                    *opt.background_enabled = false;
+        }
+        fclose(f);
+    }
+    ///////////////////////////////////////////////////////////////////
+    // call inits to invoke all other construction parts
+    initMenuBar();
+    initToolBar();
+    initStatusBar();
+
+    initDoc();
+    initView();
+
+    slotFileNew();
 }
 
 Freecell::~Freecell()
 {
-    if(rotation == 0) {
+    if (rotation == 0) {
         slotFileRotate();       // rotate to 0 when ending
     }
 }
 
 void Freecell::initMenuBar()
 {
-  ///////////////////////////////////////////////////////////////////
-  // MENUBAR
+    ///////////////////////////////////////////////////////////////////
+    // MENUBAR
 
-  ///////////////////////////////////////////////////////////////////
-  // menuBar entry fileMenu
+    ///////////////////////////////////////////////////////////////////
+    // menuBar entry fileMenu
 
 #ifdef QTOPIA
     fileMenu = QSoftMenuBar::menuFor(this);
@@ -152,55 +156,54 @@ void Freecell::initMenuBar()
     fileMenu = menuBar()->addMenu("&File");
 #endif
 
-  fileMenu->addAction("Rotate", this, SLOT(slotFileRotate()));
-  fileMenu->addAction("New Game", this, SLOT(slotFileNew()));
-  fileMenu->addAction("Select Game", this, SLOT(slotFileSelect()));
-  fileMenu->addAction("Statistic", this, SLOT(slotFileStatistic()));
-  fileMenu->addAction("Options", this, SLOT(slotFileOptions()));
-  fileMenu->addAction("Exit", this, SLOT(slotFileQuit()));
+    fileMenu->addAction("Rotate", this, SLOT(slotFileRotate()));
+    fileMenu->addAction("New Game", this, SLOT(slotFileNew()));
+    fileMenu->addAction("Select Game", this, SLOT(slotFileSelect()));
+    fileMenu->addAction("Statistic", this, SLOT(slotFileStatistic()));
+    fileMenu->addAction("Options", this, SLOT(slotFileOptions()));
+    fileMenu->addAction("Exit", this, SLOT(slotFileQuit()));
 
-  ///////////////////////////////////////////////////////////////////
-  // menuBar entry protocolMenu
-  protocolMenu=new QMenu();
-  protocolMenu->addAction("Start Protocol", this, SLOT(slotProtocolStart()));
-  protocolMenu->addAction("Stop Protocol", this, SLOT(slotProtocolStop()));
-	
-  ///////////////////////////////////////////////////////////////////
-  // menuBar entry viewMenu
-  //viewMenu=new QPopupMenu();
-  //viewMenu->setCheckable(true);
-  //viewMenu->insertItem("Tool&bar", this, SLOT(slotViewToolBar()), 0, ID_VIEW_TOOLBAR);
-  //viewMenu->insertItem("&Statusbar", this, SLOT(slotViewStatusBar()), 0, ID_VIEW_STATUSBAR);
+    ///////////////////////////////////////////////////////////////////
+    // menuBar entry protocolMenu
+    protocolMenu = new QMenu();
+    protocolMenu->addAction("Start Protocol", this, SLOT(slotProtocolStart()));
+    protocolMenu->addAction("Stop Protocol", this, SLOT(slotProtocolStop()));
 
-  //viewMenu->setItemChecked(ID_VIEW_TOOLBAR, true);
-  //viewMenu->setItemChecked(ID_VIEW_STATUSBAR, true);
+    ///////////////////////////////////////////////////////////////////
+    // menuBar entry viewMenu
+    //viewMenu=new QPopupMenu();
+    //viewMenu->setCheckable(true);
+    //viewMenu->insertItem("Tool&bar", this, SLOT(slotViewToolBar()), 0, ID_VIEW_TOOLBAR);
+    //viewMenu->insertItem("&Statusbar", this, SLOT(slotViewStatusBar()), 0, ID_VIEW_STATUSBAR);
 
-  ///////////////////////////////////////////////////////////////////
-  // EDIT YOUR APPLICATION SPECIFIC MENUENTRIES HERE
-  
-  ///////////////////////////////////////////////////////////////////
-  // menuBar entry helpMenu
-  helpMenu=new QMenu();
-  helpMenu->addAction("About...", this, SLOT(slotHelpAbout()));
+    //viewMenu->setItemChecked(ID_VIEW_TOOLBAR, true);
+    //viewMenu->setItemChecked(ID_VIEW_STATUSBAR, true);
 
+    ///////////////////////////////////////////////////////////////////
+    // EDIT YOUR APPLICATION SPECIFIC MENUENTRIES HERE
 
-  ///////////////////////////////////////////////////////////////////
-  // MENUBAR CONFIGURATION
-  // set menuBar() the current menuBar 
+    ///////////////////////////////////////////////////////////////////
+    // menuBar entry helpMenu
+    helpMenu = new QMenu();
+    helpMenu->addAction("About...", this, SLOT(slotHelpAbout()));
+
+    ///////////////////////////////////////////////////////////////////
+    // MENUBAR CONFIGURATION
+    // set menuBar() the current menuBar 
 
 //  menuBar()->insertItem("&File", fileMenu);
 //  menuBar()->insertItem("&Protocol", protocolMenu);
 //
 //  menuBar()->insertSeparator();
 //  menuBar()->insertItem("&Help", helpMenu);
-  
-  ///////////////////////////////////////////////////////////////////
-  // CONNECT THE SUBMENU SLOTS WITH SIGNALS
 
-  connect(fileMenu, SIGNAL(highlighted(int)), SLOT(statusCallback(int)));
-  connect(protocolMenu, SIGNAL(highlighted(int)), SLOT(statusCallback(int)));
-  connect(helpMenu, SIGNAL(highlighted(int)), SLOT(statusCallback(int)));
-  
+    ///////////////////////////////////////////////////////////////////
+    // CONNECT THE SUBMENU SLOTS WITH SIGNALS
+
+    connect(fileMenu, SIGNAL(highlighted(int)), SLOT(statusCallback(int)));
+    connect(protocolMenu, SIGNAL(highlighted(int)), SLOT(statusCallback(int)));
+    connect(helpMenu, SIGNAL(highlighted(int)), SLOT(statusCallback(int)));
+
 }
 
 void Freecell::initToolBar()
@@ -213,162 +216,147 @@ void Freecell::initStatusBar()
 
 void Freecell::initDoc()
 {
-   doc=new FreecellDoc();
+    doc = new FreecellDoc();
 }
 
 void Freecell::initView()
-{ 
-  view=new FreecellView(this, doc);
-  setCentralWidget(view);
-  view->enterFullScreen();
+{
+    view = new FreecellView(this, doc);
+    setCentralWidget(view);
+    view->enterFullScreen();
 }
 
 bool Freecell::queryExit()
 {
-  int exit=QMessageBox::information(this, "Quit...",
-                                    "Do your really want to quit?",
-                                    QMessageBox::Ok, QMessageBox::Cancel);
+    int exit = QMessageBox::information(this, "Quit...",
+                                        "Do your really want to quit?",
+                                        QMessageBox::Ok, QMessageBox::Cancel);
 
-  if (exit==1)
-  {
+    if (exit == 1) {
 
-  }
-  else
-  {
+    } else {
 
-  };
+    };
 
-  return (exit==1);
+    return (exit == 1);
 }
 
 /////////////////////////////////////////////////////////////////////
 // SLOT IMPLEMENTATION
 /////////////////////////////////////////////////////////////////////
 
-
 void Freecell::slotFileNew()
 {
-	int  i;
-	char buffer[100];
-	
-  doc->newDoc();
+    int i;
+    char buffer[100];
 
-  i = 1;
-	if(view->game_active)
-		if(newGameWarning()==QDialog::Accepted)	
-		{
-			i = 1;
-			pstatistics->addLost();
-		} else i = 0;
-	
-	if(i==1)
-	{
-   	srand(time(NULL));
+    doc->newDoc();
 
-   	current_game = rand()%MAX_GAMES;
-    	
-   	view->cards.clear();
-   	view->cards.init(current_game);
-   	view->card_selected = false;
-   	view->rest = REST_INIT;
-   	view->game_active = true;
-	 	view->moves = 0;
-	 	
-	 	slotProtocolStop();
-                view->repaint();
-   }
-    	
+    i = 1;
+    if (view->game_active)
+        if (newGameWarning() == QDialog::Accepted) {
+            i = 1;
+            pstatistics->addLost();
+        } else
+            i = 0;
+
+    if (i == 1) {
+        srand(time(NULL));
+
+        current_game = rand() % MAX_GAMES;
+
+        view->cards.clear();
+        view->cards.init(current_game);
+        view->card_selected = false;
+        view->rest = REST_INIT;
+        view->game_active = true;
+        view->moves = 0;
+
+        slotProtocolStop();
+        view->repaint();
+    }
+
 }
-
-
 
 void Freecell::slotFileSelect()
 {
-	int i;
-		
-	CSelectGameDlg dlg(this);
+    int i;
+
+    CSelectGameDlg dlg(this);
 
     QRect scr = QApplication::desktop()->screenGeometry();
     dlg.show();
-    dlg.move(scr.center().x() - dlg.width() / 2, scr.center().y() - dlg.height() / 2);
+    dlg.move(scr.center().x() - dlg.width() / 2,
+             scr.center().y() - dlg.height() / 2);
 
- 	if(dlg.exec()==QDialog::Accepted)
-	{	
-   	i = 1;
-   	if(view->game_active)
-   		if(newGameWarning()==QDialog::Accepted)
-   		{
-   			i = 1;
-   			pstatistics->addLost();
-   		} else i = 0;
+    if (dlg.exec() == QDialog::Accepted) {
+        i = 1;
+        if (view->game_active)
+            if (newGameWarning() == QDialog::Accepted) {
+                i = 1;
+                pstatistics->addLost();
+            } else
+                i = 0;
 
-   	if(i==1)
-   	{    		
- 	   	view->cards.clear();
-   	 	view->cards.init(dlg.getGamenumber());		
-   		view->card_selected = false;
- 	   	view->rest = REST_INIT;
-   	 	view->game_active = true;
-			view->moves = 0;
-			        	
- 	   	current_game = dlg.getGamenumber();
-		 	
-		 	slotProtocolStop();
-                        view->repaint();
-   	}
-  }
- 	
+        if (i == 1) {
+            view->cards.clear();
+            view->cards.init(dlg.getGamenumber());
+            view->card_selected = false;
+            view->rest = REST_INIT;
+            view->game_active = true;
+            view->moves = 0;
+
+            current_game = dlg.getGamenumber();
+
+            slotProtocolStop();
+            view->repaint();
+        }
+    }
+
 }
-
 
 void Freecell::slotFileStatistic()
 {
-    if(pstatistics==NULL)
+    if (pstatistics == NULL)
         pstatistics = new CStatistics(this, "", false);
 
     QRect scr = QApplication::desktop()->screenGeometry();
-	pstatistics->show();
-    pstatistics->move(scr.center().x() - pstatistics->width() / 2, scr.center().y() - pstatistics->height() / 2);
+    pstatistics->show();
+    pstatistics->move(scr.center().x() - pstatistics->width() / 2,
+                      scr.center().y() - pstatistics->height() / 2);
 }
-
 
 void Freecell::slotFileQuit()
-{ 
-	if(view->game_active)
-	{	
-		if(newGameWarning()==QDialog::Accepted)	
-		{
-			pstatistics->addLost();
-                        qApp->quit();
-		}
-	}
-	else qApp->quit();
+{
+    if (view->game_active) {
+        if (newGameWarning() == QDialog::Accepted) {
+            pstatistics->addLost();
+            qApp->quit();
+        }
+    } else
+        qApp->quit();
 }
-
 
 void Freecell::slotViewToolBar()
 {
-  ///////////////////////////////////////////////////////////////////
-  // turn Toolbar on or off
-  
-  if (fileToolbar->isVisible())
-  {
-    fileToolbar->hide();
-    //viewMenu->setItemChecked(ID_VIEW_TOOLBAR, false);
-  } 
-  else
-  {
-    fileToolbar->show();
-    //viewMenu->setItemChecked(ID_VIEW_TOOLBAR, true);
-  };
+    ///////////////////////////////////////////////////////////////////
+    // turn Toolbar on or off
+
+    if (fileToolbar->isVisible()) {
+        fileToolbar->hide();
+        //viewMenu->setItemChecked(ID_VIEW_TOOLBAR, false);
+    } else {
+        fileToolbar->show();
+        //viewMenu->setItemChecked(ID_VIEW_TOOLBAR, true);
+    };
 
 }
 
 void Freecell::slotViewStatusBar()
 {
-  ///////////////////////////////////////////////////////////////////
-  //turn Statusbar on or off
-  
+    ///////////////////////////////////////////////////////////////////
+    //turn Statusbar on or off
+
 //  if (statusBar()->isVisible())
 //  {
 //    statusBar()->hide();
@@ -379,8 +367,8 @@ void Freecell::slotViewStatusBar()
 //    statusBar()->show();
 //    //viewMenu->setItemChecked(ID_VIEW_STATUSBAR, true);
 //  }
-  
-  //statusBar()->message(IDS_STATUS_DEFAULT);
+
+    //statusBar()->message(IDS_STATUS_DEFAULT);
 }
 
 void Freecell::slotHelpAbout()
@@ -389,44 +377,42 @@ void Freecell::slotHelpAbout()
 //                     IDS_APP_ABOUT );
 }
 
-void Freecell::slotStatusHelpMsg(const QString &text)
+void Freecell::slotStatusHelpMsg(const QString & text)
 {
-  ///////////////////////////////////////////////////////////////////
-  // change status message of whole statusbar temporary (text, msec)
-  //statusBar()->message(text, 2000);
+    ///////////////////////////////////////////////////////////////////
+    // change status message of whole statusbar temporary (text, msec)
+    //statusBar()->message(text, 2000);
 }
 
 void Freecell::statusCallback(int id_)
 {
-  switch (id_)
-  {
+    switch (id_) {
     case ID_FILE_NEW:
-         slotStatusHelpMsg("New Game");
-         break;
+        slotStatusHelpMsg("New Game");
+        break;
 
     case ID_FILE_SELECT:
-         slotStatusHelpMsg("Select Game");
-         break;
+        slotStatusHelpMsg("Select Game");
+        break;
 
     case ID_FILE_OPTIONS:
-    		 slotStatusHelpMsg("Options");
-
+        slotStatusHelpMsg("Options");
 
     case ID_FILE_QUIT:
-         slotStatusHelpMsg("Quits QFreeCell");
-         break;
+        slotStatusHelpMsg("Quits QFreeCell");
+        break;
 
     case ID_HELP_ABOUT:
-         slotStatusHelpMsg("Shows an aboutbox");
-         break;
-  }
+        slotStatusHelpMsg("Shows an aboutbox");
+        break;
+    }
 }
-
 
 /**  */
 void Freecell::won()
 {
-    QMessageBox::information(this, tr("Congratulation"), tr("You have won this game!"));
+    QMessageBox::information(this, tr("Congratulation"),
+                             tr("You have won this game!"));
     pstatistics->addWon();
     pstatistics->show();
 }
@@ -440,21 +426,22 @@ void Freecell::lost()
 /**  */
 bool Freecell::newGameWarning()
 {
-    return QMessageBox::question(this, tr("Freecell"), tr("Really close the game?"),
-                                 QMessageBox::Yes, QMessageBox::No) == QMessageBox::Yes;
+    return QMessageBox::question(this, tr("Freecell"),
+                                 tr("Really close the game?"), QMessageBox::Yes,
+                                 QMessageBox::No) == QMessageBox::Yes;
 }
 
 /**  */
-void Freecell::closeEvent(QCloseEvent *e)
+void Freecell::closeEvent(QCloseEvent * e)
 {
-	if(view->game_active)
-		if(newGameWarning()==QDialog::Accepted)	
-		{
-			pstatistics->addLost();
-			e->accept();
-		}
-		else e->ignore();
-	else e->accept();
+    if (view->game_active)
+        if (newGameWarning() == QDialog::Accepted) {
+            pstatistics->addLost();
+            e->accept();
+        } else
+            e->ignore();
+    else
+        e->accept();
 }
 
 /**  */
@@ -473,57 +460,59 @@ void Freecell::slotFileRotate()
 }
 
 /**  */
-void Freecell::slotProtocolStart(){
-//	char buffer[200];
+void Freecell::slotProtocolStart()
+{
+//  char buffer[200];
 //
-//	sprintf(buffer, "%s/protocols", directory);
-//	QFileDialog d(buffer, "*.qfc", this, 0, true);
+//  sprintf(buffer, "%s/protocols", directory);
+//  QFileDialog d(buffer, "*.qfc", this, 0, true);
 //
-//	d.setMode(QFileDialog::AnyFile);
+//  d.setMode(QFileDialog::AnyFile);
 //
-//	if(d.exec()==QDialog::Accepted)
-//	{
-//		protocol_file = new QString(d.selectedFile());
+//  if(d.exec()==QDialog::Accepted)
+//  {
+//      protocol_file = new QString(d.selectedFile());
 //
-//		if(protocol_fd!=NULL) fclose(protocol_fd);
+//      if(protocol_fd!=NULL) fclose(protocol_fd);
 //
-//		protocol_fd = fopen((char*)protocol_file->data(), "a");
+//      protocol_fd = fopen((char*)protocol_file->data(), "a");
 //
-//		if(protocol_fd==NULL) protocol_file = new QString();
-//		else
-//		{
-//   		time_t t = time(NULL);
-//   		fprintf(protocol_fd, "Start: %sGame: %i\n", ctime(&t), current_game);
-//			protocolMenu->setItemEnabled(ID_PROTOCOL_START, false);
-//			protocolMenu->setItemEnabled(ID_PROTOCOL_STOP, true);
-//   	}
+//      if(protocol_fd==NULL) protocol_file = new QString();
+//      else
+//      {
+//          time_t t = time(NULL);
+//          fprintf(protocol_fd, "Start: %sGame: %i\n", ctime(&t), current_game);
+//          protocolMenu->setItemEnabled(ID_PROTOCOL_START, false);
+//          protocolMenu->setItemEnabled(ID_PROTOCOL_STOP, true);
+//      }
 //
-//		view->repaint(5, 580, 150, 20, false);
-//	}
+//      view->repaint(5, 580, 150, 20, false);
+//  }
 }
 
 /**  */
-void Freecell::slotProtocolStop(){
-	if(protocol_fd!=NULL)
-	{
- 		time_t t = time(NULL);
- 		if(view->moves%10!=0) fprintf(protocol_fd, "\n");
- 		fprintf(protocol_fd, "Stop: %s\n\n", ctime(&t));
-		fclose(protocol_fd);
-		protocol_fd = NULL;
-	}
-	
-//	if(view->game_active)
-//		protocolMenu->setItemEnabled(ID_PROTOCOL_START, true);
-//	else
-//		protocolMenu->setItemEnabled(ID_PROTOCOL_START, false);
-	
-//	protocolMenu->setItemEnabled(ID_PROTOCOL_STOP, false);
+void Freecell::slotProtocolStop()
+{
+    if (protocol_fd != NULL) {
+        time_t t = time(NULL);
+        if (view->moves % 10 != 0)
+            fprintf(protocol_fd, "\n");
+        fprintf(protocol_fd, "Stop: %s\n\n", ctime(&t));
+        fclose(protocol_fd);
+        protocol_fd = NULL;
+    }
+//  if(view->game_active)
+//      protocolMenu->setItemEnabled(ID_PROTOCOL_START, true);
+//  else
+//      protocolMenu->setItemEnabled(ID_PROTOCOL_START, false);
 
-        view->repaint();
+//  protocolMenu->setItemEnabled(ID_PROTOCOL_STOP, false);
+
+    view->repaint();
 }
 
 /**  */
-void Freecell::myCopy(char *src, char *dst){
+void Freecell::myCopy(char *src, char *dst)
+{
     QFile::copy(src, dst);
 }

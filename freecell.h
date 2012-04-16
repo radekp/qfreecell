@@ -53,11 +53,10 @@
   */
 class Freecell : public QMainWindow
 {
-  Q_OBJECT
-  
-  public:
+    Q_OBJECT
+public:
     /** construtor */
-    Freecell(QWidget *parent = 0, Qt::WFlags flags = 0);
+    Freecell(QWidget * parent = 0, Qt::WFlags flags = 0);
     /** destructor */
     ~Freecell();
     /** initMenuBar creates the menu_bar and inserts the menuitems */
@@ -71,26 +70,26 @@ class Freecell : public QMainWindow
     void initDoc();
     /** setup the mainview*/
     void initView();
-  
+
     /** overloaded for Message box on last window exit */
     bool queryExit();
   /**  */
-  void won();
+    void won();
   /**  */
-  void lost();
+    void lost();
   /**  */
-  bool newGameWarning();
+    bool newGameWarning();
   /**  */
-  void closeEvent(QCloseEvent *e);
+    void closeEvent(QCloseEvent * e);
   /**  */
-  void myCopy(char *src, char *dst);
+    void myCopy(char *src, char *dst);
 
-  public slots:
-  
+public slots:
+
     /** switch argument for Statusbar help entries on slot selection */
     void statusCallback(int id_);
     /** open a new application window */
-  
+
     /** generate a new document in the actual view */
     void slotFileNew();
     void slotFileSelect();
@@ -106,34 +105,34 @@ class Freecell : public QMainWindow
     void slotViewToolBar();
     /** toggle the statusbar*/
     void slotViewStatusBar();
-  
+
     /** shows an about dlg*/
     void slotHelpAbout();
-  
+
     /** change the status message of the whole statusbar temporary */
-    void slotStatusHelpMsg(const QString &text);
+    void slotStatusHelpMsg(const QString & text);
   /**  */
-  void slotFileOptions();
-  void slotFileRotate();
+    void slotFileOptions();
+    void slotFileRotate();
 
   /** */
-  void slotProtocolStart();
+    void slotProtocolStart();
   /**  */
-  void slotProtocolStop();
+    void slotProtocolStop();
 
-  private:
+private:
 
     /** view is the main widget which represents your working area. The View
      * class should handle all events of the view widget.  It is kept empty so
      * you can create your view according to your application's needs by
      * changing the view class.
      */
-    FreecellView *view;
+     FreecellView * view;
     /** doc represents your actual document and is created only once. It keeps
      * information such as filename and does the serialization of your files.
      */
     FreecellDoc *doc;
-  
+
     /** file_menu contains all items of the menubar entry "File" */
     QMenu *fileMenu;
     /** edit_menu contains all items of the menubar entry "Edit" */
@@ -142,34 +141,34 @@ class Freecell : public QMainWindow
     QMenu *viewMenu;
     /** view_menu contains all items of the menubar entry "Help" */
     QMenu *helpMenu;
-  
+
     QToolBar *fileToolbar;
 
-public: // Public attributes
+public:                        // Public attributes
   /**  */
-  class CStatistics *pstatistics;
+     class CStatistics * pstatistics;
 
-	struct options{
-		char   *empty_file;
-		char   *background_file;
-		QColor *background_color;
-		bool   *background_enabled;
-		int    *num_freecells;
-		int    *spinbox_freecells_min;
-	}opt;
+    struct options
+    {
+        char *empty_file;
+        char *background_file;
+        QColor *background_color;
+        bool *background_enabled;
+        int *num_freecells;
+        int *spinbox_freecells_min;
+    } opt;
 
-	/** protocol file name */
-  QString *protocol_file;
+    /** protocol file name */
+    QString *protocol_file;
   /**  */
-  FILE *protocol_fd;
+    FILE *protocol_fd;
   /**  */
-  int current_game;
+    int current_game;
   /**  */
-  char directory[200];
+    char directory[200];
   /**  */
-  char game_directory[200];
+    char game_directory[200];
 
-  int rotation;     // degreess for next rotate
+    int rotation;               // degreess for next rotate
 };
-#endif 
-
+#endif

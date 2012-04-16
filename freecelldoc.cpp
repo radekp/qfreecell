@@ -19,7 +19,7 @@
 
 FreecellDoc::FreecellDoc()
 {
-  modified = false;
+    modified = false;
 }
 
 FreecellDoc::~FreecellDoc()
@@ -32,21 +32,21 @@ void FreecellDoc::newDoc()
 
 bool FreecellDoc::save()
 {
-  return true;
+    return true;
 }
 
-bool FreecellDoc::saveAs(const QString &filename)
+bool FreecellDoc::saveAs(const QString & filename)
 {
-  return true;
+    return true;
 }
 
-bool FreecellDoc::load(const QString &filename)
+bool FreecellDoc::load(const QString & filename)
 {
-  emit documentChanged();
-  return true;
+    emit documentChanged();
+    return true;
 }
 
 bool FreecellDoc::isModified() const
 {
-  return modified;
+    return modified;
 }

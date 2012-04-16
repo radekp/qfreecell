@@ -10,23 +10,23 @@
 #include "cselectgamedlg.h"
 #include <QGridLayout>
 
-void  CSelectGameDlg::initDialog(){
-
+void CSelectGameDlg::initDialog()
+{
     QGridLayout *grid = new QGridLayout(this);
 
-    QPushButton_1= new QPushButton(this);
+    QPushButton_1 = new QPushButton(this);
     QPushButton_1->setText("OK");
     grid->addWidget(QPushButton_1, 1, 1);
 
-    QLabel_1= new QLabel(this);
+    QLabel_1 = new QLabel(this);
     QLabel_1->setText("Game:");
     grid->addWidget(QLabel_1, 0, 0);
 
-    QSpinBox_1= new QSpinBox(this);
-    QSpinBox_1->setRange(1,50000);
+    QSpinBox_1 = new QSpinBox(this);
+    QSpinBox_1->setRange(1, 50000);
     grid->addWidget(QSpinBox_1, 0, 1);
 
-    QPushButton_ABORT= new QPushButton(this);
+    QPushButton_ABORT = new QPushButton(this);
     QPushButton_ABORT->setText("Abort");
     grid->addWidget(QPushButton_ABORT, 1, 0);
 }

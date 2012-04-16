@@ -38,68 +38,70 @@
   *@author Daniel Etzold
   */
 
-class COptions : public QDialog  {
+class COptions : public QDialog
+{
   /**  */
-  void paintEvent(QPaintEvent *e);
-   Q_OBJECT
-public: 
-	COptions(QWidget *parent=0, const char *name=0, void *o=0);
-	~COptions();
+    void paintEvent(QPaintEvent * e);
+     Q_OBJECT
+public:
+     COptions(QWidget * parent = 0, const char *name = 0, void *o = 0);
+    ~COptions();
   /**  */
-  QDir dir;
+    QDir dir;
 
-protected: 
-	void initDialog();
-	//Generated area. DO NOT EDIT!!!(begin)
-	QGroupBox *QGroupBox_1;
-	QLabel *QLabel_1;
-	QPushButton *QPushButton_OK;
-	QScrollBar *QScrollBar_EMPTY;
-	QPushButton *QPushButton_CANCEL;
-	QRadioButton *QRadioButton_FILE;
-	QLineEdit *QLineEdit_BACKGROUND;
-	QRadioButton *QRadioButton_COLOR;
-	QPushButton *QPushButton_SELECTFILE;
-	QWidget *QWidget_COLORWIDGET;
-	QLabel *QLabel_2;
-	QSpinBox *QSpinBox_NUMFREECELLS;
-	//Generated area. DO NOT EDIT!!!(end)
+protected:
+    void initDialog();
+    //Generated area. DO NOT EDIT!!!(begin)
+    QGroupBox *QGroupBox_1;
+    QLabel *QLabel_1;
+    QPushButton *QPushButton_OK;
+    QScrollBar *QScrollBar_EMPTY;
+    QPushButton *QPushButton_CANCEL;
+    QRadioButton *QRadioButton_FILE;
+    QLineEdit *QLineEdit_BACKGROUND;
+    QRadioButton *QRadioButton_COLOR;
+    QPushButton *QPushButton_SELECTFILE;
+    QWidget *QWidget_COLORWIDGET;
+    QLabel *QLabel_2;
+    QSpinBox *QSpinBox_NUMFREECELLS;
+    //Generated area. DO NOT EDIT!!!(end)
 
-private: 
+private:
 
-public: // Public attributes
+public:                        // Public attributes
   /**  */
-  QPixmap current_empty;
+     QPixmap current_empty;
   /**  */
-  int selected;
+    int selected;
   /**  */
-  char buffer[200];
-	
-	struct options{
-		char   *empty_file;
-		char   *background_file;
-		QColor *background_color;
-		bool   *background_enabled;
-		int		 *num_freecells;
-		int    *spinbox_freecells_min;
-	}opt;
-	
-public slots: // Public slots
+    char buffer[200];
+
+    struct options
+    {
+        char *empty_file;
+        char *background_file;
+        QColor *background_color;
+        bool *background_enabled;
+        int *num_freecells;
+        int *spinbox_freecells_min;
+    } opt;
+
+public slots:                  // Public slots
   /**  */
   /**  */
-  void ok();
-  void newEmpty(int i);
+    void ok();
+    void newEmpty(int i);
   /**  */
-  void slotRadioFile();
+    void slotRadioFile();
   /**  */
-  void slotRadioColor();
+    void slotRadioColor();
   /**  */
-  void slotSelectFile();
+    void slotSelectFile();
   /**  */
-  void slotSelectColor();
-private: // Private attributes
+    void slotSelectColor();
+private:                       // Private attributes
   /**  */
-  Freecell *parent_class;
+     Freecell * parent_class;
 };
 
 #endif
