@@ -67,14 +67,6 @@ COptions::COptions(QWidget *parent, const char *name, void *o)
         dir.setNameFilters(QStringList() << "*.bmp");
 		
 	selected = 0;
-	for(i=0;i<dir.count();i++)
-	{
-                sprintf(buffer, "%s/%s", dir.path().toLatin1().data(), dir[i]);
-		if(strcmp(buffer, opt.empty_file)==0) selected = i;
-	}
-	
-        sprintf(opt.empty_file, "%s/%s", dir.path().toLatin1().data(), dir[selected]);
-	current_empty.load(opt.empty_file);
 	
 	if(dir.count()-1>0)
 		QScrollBar_EMPTY->setRange(0, dir.count()-1);
@@ -93,12 +85,6 @@ void COptions::paintEvent(QPaintEvent *e){
 
 /**  */
 void COptions::newEmpty(int i){
-	selected = i;	
-        sprintf(opt.empty_file, "%s/%s", dir.path().toLatin1().data(), dir[i]);
-	current_empty.load(opt.empty_file);
-	
-	QPainter k(this);
-	k.drawPixmap(10, 30, current_empty);
 }
 
 /**  */

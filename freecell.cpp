@@ -71,52 +71,8 @@ Freecell::Freecell(QWidget *parent, Qt::WFlags flags)
 	{
 		printf("Creating ~/.qfreecell...\n");
 		d.mkdir(directory);
-		sprintf(buffer, "%s/freecells", directory);
-		d.mkdir(buffer);
-		sprintf(buffer, "%s/backgrounds", directory);
-		d.mkdir(buffer);
 		sprintf(buffer, "%s/protocols", directory);
-		d.mkdir(buffer);
-		sprintf(buffer, "%s/cards", directory);
-		d.mkdir(buffer);
-		
-		// copy standard bitmaps to ~./qfreecell
-		d.setPath(game_directory);
-		d.cd("pictures");
-
-		char 				 src[200];
-		char 				 dst[200];		
-		unsigned int i;
-		
-		d.cd("backgrounds");
-                d.setNameFilters(QStringList() << "*.bmp");
-		for(i=0;i<d.count();i++)
-		{
-			sprintf(dst, "%s/backgrounds/%s", directory, d[i]);
-                        sprintf(src, "%s/%s", d.path().toLatin1().data(), d[i]);
-			myCopy(src, dst);
-		}
-			
-		d.cdUp();
-		d.cd("freecells");
-                d.setNameFilters(QStringList() << "*.bmp");
-		for(i=0;i<d.count();i++)
-		{
-			sprintf(dst, "%s/freecells/%s", directory, d[i]);
-                        sprintf(src, "%s/%s", d.path().toLatin1().data(), d[i]);
-			myCopy(src, dst);
-		}
-				
-		d.cdUp();
-		d.cd("cards");
-                d.setNameFilters(QStringList() << "*.bmp");
-		for(i=0;i<d.count();i++)
-		{
-			sprintf(dst, "%s/cards/%s", directory, d[i]);
-                        sprintf(src, "%s/%s", d.path().toLatin1().data(), d[i]);
-			myCopy(src, dst);
-		}
-	}
+    }
 	
 	//Init statistics
 
