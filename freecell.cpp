@@ -46,13 +46,6 @@
 Freecell::Freecell(QWidget *parent, Qt::WFlags flags)
     : QMainWindow(parent, flags)
 {
-#ifdef QTOPIA
-//    QtopiaServiceRequest svreq("RotationManager", "setCurrentRotation(int)");
-//    svreq << 90;
-//    svreq.send();
-//    showFullScreen();
-#endif
-
 	FILE *f;
 
 	// create ~/.qfreecell	
@@ -141,11 +134,6 @@ Freecell::Freecell(QWidget *parent, Qt::WFlags flags)
 
 Freecell::~Freecell()
 {
-#ifdef QTOPIA
-    QtopiaServiceRequest svreq("RotationManager", "setCurrentRotation(int)");
-    svreq << 0;
-    svreq.send();
-#endif
 }
 
 void Freecell::initMenuBar()
@@ -163,6 +151,7 @@ void Freecell::initMenuBar()
     fileMenu = menuBar()->addMenu("&File");
 #endif
 
+  fileMenu->addAction("Rotate", this, SLOT(slotFileRotate()));
   fileMenu->addAction("New Game", this, SLOT(slotFileNew()));
   fileMenu->addAction("Select Game", this, SLOT(slotFileSelect()));
   fileMenu->addAction("Statistic", this, SLOT(slotFileStatistic()));
@@ -467,6 +456,17 @@ void Freecell::closeEvent(QCloseEvent *e)
 /**  */
 void Freecell::slotFileOptions()
 {
+}
+
+void Freecell::slotFileRotate()
+{
+    static int rotation = 90;
+#ifdef QTOPIA
+    QtopiaServiceRequest svreq("RotationManager", "setCurrentRotation(int)");
+    svreq << rotation;
+    svreq.send();
+    rotation = (rotation ? 0 : 90);
+#endif
 }
 
 /**  */

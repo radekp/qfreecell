@@ -114,6 +114,7 @@ class Freecell : public QMainWindow
     void slotStatusHelpMsg(const QString &text);
   /**  */
   void slotFileOptions();
+  void slotFileRotate();
 
   /** */
   void slotProtocolStart();
