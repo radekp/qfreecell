@@ -33,6 +33,7 @@
 #include <QMessageBox>
 #include <QApplication>
 #include <QCloseEvent>
+#include <QDesktopWidget>
 
 #include <math.h>
 
@@ -147,7 +148,6 @@ void Freecell::initMenuBar()
 
 #ifdef QTOPIA
     fileMenu = QSoftMenuBar::menuFor(this);
-    fileMenu->addAction("");
 #else
     fileMenu = menuBar()->addMenu("&File");
 #endif
@@ -284,10 +284,13 @@ void Freecell::slotFileNew()
 
 void Freecell::slotFileSelect()
 {
-	char buffer[100];
 	int i;
 		
 	CSelectGameDlg dlg(this);
+
+    QRect scr = QApplication::desktop()->screenGeometry();
+    dlg.show();
+    dlg.move(scr.center().x() - dlg.width() / 2, scr.center().y() - dlg.height() / 2);
 
  	if(dlg.exec()==QDialog::Accepted)
 	{	
@@ -323,10 +326,9 @@ void Freecell::slotFileStatistic()
     if(pstatistics==NULL)
         pstatistics = new CStatistics(this, "", false);
 
-#ifdef QTOPIA
-    pstatistics->setGeometry(x(), y(), width(), height());
-#endif
+    QRect scr = QApplication::desktop()->screenGeometry();
 	pstatistics->show();
+    pstatistics->move(scr.center().x() - pstatistics->width() / 2, scr.center().y() - pstatistics->height() / 2);
 }
 
 

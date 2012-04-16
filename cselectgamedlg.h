@@ -55,7 +55,6 @@ public: // Public attributes
   /**  */
   int gamenumber;
 	//Generated area. DO NOT EDIT!!!(begin)
-	QGroupBox *QGroupBox_1;
 	QPushButton *QPushButton_1;
 	QLabel *QLabel_1;
 	QSpinBox *QSpinBox_1;
