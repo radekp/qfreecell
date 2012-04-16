@@ -64,7 +64,7 @@ void FreecellView::renderCards()
     cardWidth = newWidth;
     cardHeight = newHeight;
 
-    for(int i = 0;; i++) {
+    for(int i = 0; i < 54; i++) {
         QPixmap pix = QPixmap(cardWidth, cardHeight);
         pix.fill(Qt::transparent);
         QPainter p(&pix);
@@ -98,18 +98,7 @@ void FreecellView::renderCards()
         }
 
         svg.render(&p, elemName, QRectF(4, 4, cardWidth - 8, cardHeight - 8));
-
-        if(i < 52) {
-             cardpics[i] = pix;
-        }
-        else if(i == 52)
-        {
-            empty1 = pix;
-        }
-        else {
-            empty2 = pix;
-            break;
-        }
+        cardpics[i] = pix;
     }
 }
 
@@ -262,47 +251,45 @@ void FreecellView::enterFullScreen()
 #endif
 }
 
-void FreecellView::paintEvent(QPaintEvent * event)
+void FreecellView::drawCard(QPainter & p, QPaintEvent * e, int x, int y, int card)
+{
+    QRect cardRect(x, y, cardWidth, cardHeight);
+    if(cardRect.intersect(e->rect()).isEmpty())
+        return;
+    p.drawPixmap(x, y, cardpics[card]);
+}
+
+void FreecellView::paintEvent(QPaintEvent * e)
 {
     int i, j;
     QPainter p(this);
 
-    p.fillRect(event->rect(), Qt::darkGreen);
+    p.fillRect(e->rect(), Qt::darkGreen);
 
     // clear cells
     for (i = 0; i < 8; i++)
         if (i < *(parent_class->opt.num_freecells) || i > 3)
-            p.drawPixmap(cardLeft + cardWidth * i, cardTop, i < 4 ? empty1 : empty2);
+            drawCard(p, e, cardLeft + cardWidth * i, cardTop, i < 4 ? 52 : 53);
 
     // draw columns
     for (i = 0; i < 8; i++) {
         for (j = 0; j < 15; j++) {
             if (cards.getCard(i, j) == NO_CARD)
                 continue;
-            if (cardLeft + i * cardWidth + cardWidth <= (event->rect()).left())
-                continue;
             if (card_selected && selected_card.x == i && selected_card.y == j)
                 continue;
-
-            p.drawPixmap(cardLeft + i * cardWidth, cardTop + cardHeight + (j * cardHeight) / 3,
-                         cardpics[cards.getCard(i, j)], 0, 0,
-                         cardWidth - 1, CARD_HEIGHT);
+            drawCard(p, e, cardLeft + i * cardWidth, cardTop + cardHeight + (j * cardHeight) / 3, cards.getCard(i, j));
         }
     }
 
     // draw cells
     for (i = 0; i < 8; i++) {
         if (i < *(parent_class->opt.num_freecells) || i > 3) {
-            if (cards.getBoxCard(i) != NO_CARD) {
-                if (cardLeft + cardWidth * i + (i / 4) * 70 + 1 + cardWidth >
-                    (event->rect()).left()) {
-                    if(card_selected && i == selected_card.x && selected_card.y == -1)
-                        continue;
-                    p.drawPixmap(cardLeft + cardWidth * i, cardTop,
-                                 cardpics[cards.getBoxCard(i)], 0, 0,
-                                 cardWidth - 1, CARD_HEIGHT);
-                }
-            }
+            if (cards.getBoxCard(i) == NO_CARD)
+                continue;
+            if(card_selected && i == selected_card.x && selected_card.y == -1)
+                continue;
+            drawCard(p, e, cardLeft + cardWidth * i, cardTop, cards.getBoxCard(i));
         }
     }
 
@@ -317,14 +304,8 @@ void FreecellView::paintEvent(QPaintEvent * event)
                 card = cards.getCard(selected_card.x, selected_card.y);
             }
 
-            QPixmap pm = cardpics[card];
-            p.drawPixmap(mouseX - cardWidth / 2, mouseY - cardHeight / 2, pm);
+            drawCard(p, e, mouseX - cardWidth / 2, mouseY - cardHeight / 2, card);
         }
-    }
-
-    if (parent_class->protocol_fd != NULL) {
-        p.setPen(QColor(0, 255, 0));
-        p.drawText(5, 595, "Protocol enabled");
     }
 }
 

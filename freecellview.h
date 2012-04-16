@@ -58,10 +58,11 @@ public:
 private:
 
     QSvgRenderer svg;
-    QPixmap cardpics[52];
+    QPixmap cardpics[54];
     int cardWidth, cardHeight;
     int cardLeft, cardTop;
     void renderCards();
+    void drawCard(QPainter & p, QPaintEvent * e, int x, int y, int card);
 
 public:
     QPixmap empty1, empty2;
