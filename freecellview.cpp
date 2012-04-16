@@ -62,6 +62,7 @@ void FreecellView::renderCards()
 
     for(int i = 0;; i++) {
         QPixmap pix = QPixmap(cardWidth, cardHeight);
+        pix.fill(Qt::transparent);
         QPainter p(&pix);
 
         QString elemName;
@@ -85,10 +86,10 @@ void FreecellView::renderCards()
         }
         else
         {
-            elemName = "BACK_RED1";
+            elemName = "EMPTY";
         }
 
-        svg.render(&p, elemName, QRectF(0, 0, cardWidth, cardHeight));
+        svg.render(&p, elemName, QRectF(4, 4, cardWidth - 8, cardHeight - 8));
 
         if(i < 52) {
              cardpics[i] = pix;
@@ -250,6 +251,8 @@ void FreecellView::paintEvent(QPaintEvent * event)
 {
     int i, j;
     QPainter p(this);
+
+    p.fillRect(event->rect(), Qt::darkGreen);
 
     // clear cells
     for (i = 0; i < 8; i++)
