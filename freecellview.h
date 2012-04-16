@@ -60,12 +60,11 @@ private:
     QSvgRenderer svg;
     QPixmap cardpics[52];
     int cardWidth, cardHeight;
-    int spaceWidth, spaceHeight;
-    int cardLeft;
+    int cardLeft, cardTop;
     void renderCards();
 
 public:
-    QPixmap empty;
+    QPixmap empty1, empty2;
     int moves;
 
     /** holds information about the selected cards */
